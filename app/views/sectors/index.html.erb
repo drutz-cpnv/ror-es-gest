@@ -1,0 +1,25 @@
+<% content_for :title, "Sectors" %>
+
+<div class="w-full">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <div class="flex justify-between items-center">
+    <h1 class="font-bold text-4xl">Sectors</h1>
+    <%= link_to "New sector", new_sector_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %>
+  </div>
+
+  <div id="sectors" class="min-w-full">
+    <% if @sectors.any? %>
+      <% @sectors.each do |sector| %>
+        <%= render sector %>
+        <p>
+          <%= link_to "Show this sector", sector, class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+        </p>
+      <% end %>
+    <% else %>
+      <p class="text-center my-10">No sectors found.</p>
+    <% end %>
+  </div>
+</div>

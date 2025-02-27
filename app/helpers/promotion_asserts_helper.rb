@@ -1,0 +1,2 @@
+module PromotionAssertsHelper
+end

@@ -1,0 +1,25 @@
+<% content_for :title, "Statuses" %>
+
+<div class="w-full">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <div class="flex justify-between items-center">
+    <h1 class="font-bold text-4xl">Statuses</h1>
+    <%= link_to "New status", new_status_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %>
+  </div>
+
+  <div id="statuses" class="min-w-full">
+    <% if @statuses.any? %>
+      <% @statuses.each do |status| %>
+        <%= render status %>
+        <p>
+          <%= link_to "Show this status", status, class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+        </p>
+      <% end %>
+    <% else %>
+      <p class="text-center my-10">No statuses found.</p>
+    <% end %>
+  </div>
+</div>

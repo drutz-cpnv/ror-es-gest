@@ -1,0 +1,47 @@
+<%= form_with(model: course, class: "contents") do |form| %>
+  <% if course.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
+      <h2><%= pluralize(course.errors.count, "error") %> prohibited this course from being saved:</h2>
+
+      <ul class="list-disc ml-6">
+        <% course.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="my-5">
+    <%= form.label :start_at %>
+    <%= form.time_field :start_at, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": course.errors[:start_at].none?, "border-red-400 focus:outline-red-600": course.errors[:start_at].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :end_at %>
+    <%= form.time_field :end_at, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": course.errors[:end_at].none?, "border-red-400 focus:outline-red-600": course.errors[:end_at].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :week_day %>
+    <%= form.number_field :week_day, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": course.errors[:week_day].none?, "border-red-400 focus:outline-red-600": course.errors[:week_day].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :school_class_id %>
+    <%= form.text_field :school_class_id, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": course.errors[:school_class_id].none?, "border-red-400 focus:outline-red-600": course.errors[:school_class_id].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :subject_id %>
+    <%= form.text_field :subject_id, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": course.errors[:subject_id].none?, "border-red-400 focus:outline-red-600": course.errors[:subject_id].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :moment_id %>
+    <%= form.text_field :moment_id, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": course.errors[:moment_id].none?, "border-red-400 focus:outline-red-600": course.errors[:moment_id].any?}] %>
+  </div>
+
+  <div class="inline">
+    <%= form.submit class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+  </div>
+<% end %>

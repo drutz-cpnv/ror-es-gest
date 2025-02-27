@@ -1,0 +1,2 @@
+class Dean < Teacher
+end

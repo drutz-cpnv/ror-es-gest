@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  effective_date: 2025-02-13
+  course: one
+
+two:
+  title: MyString
+  effective_date: 2025-02-13
+  course: two
