@@ -12,6 +12,8 @@ ActiveRecord::Base.transaction do
     firstname: "Nicolas",
     email: "ngy@eduvaud.ch",
     phone_number: "1234567890",
+    password: "password",
+    password_confirmation: "password",
     address: address,
     status_id: active_status.id,
     iban: "IBAN123456"
@@ -23,6 +25,8 @@ ActiveRecord::Base.transaction do
     firstname: "Ana",
     email: "are@eduvaud.ch",
     phone_number: "1234567890",
+    password: "password",
+    password_confirmation: "password",
     address: address,
     status_id: active_status.id,
     iban: "IBAN123456"
@@ -32,8 +36,10 @@ ActiveRecord::Base.transaction do
     username: "cki",
     lastname: "KOHLI",
     firstname: "Charles-Henri",
-    email: "are@eduvaud.ch",
+    email: "cki@eduvaud.ch",
     phone_number: "1234567890",
+    password: "password",
+    password_confirmation: "password",
     address: address,
     status_id: active_status.id,
     iban: "IBAN123456"
@@ -45,6 +51,8 @@ ActiveRecord::Base.transaction do
     firstname: "Cindy",
     email: "cha@eduvaud.ch",
     phone_number: "1112223333",
+    password: "password",
+    password_confirmation: "password",
     address_id: address.id,
     status_id: active_status.id,
     iban: "IBANDEAN"
@@ -149,6 +157,8 @@ ActiveRecord::Base.transaction do
         firstname: "Student#{i+1}",
         email: "student_#{s_class.uid}_#{i+1}@eduvaud.ch",
         phone_number: "0000000000",
+        password: "password",
+        password_confirmation: "password",
         address_id: address.id,
         status_id: active_status.id,
         iban: "IBANSTUDENT#{i+1}"
