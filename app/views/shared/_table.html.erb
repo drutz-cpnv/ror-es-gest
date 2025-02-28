@@ -1,0 +1,20 @@
+<%# A reusable modern table component %>
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead>
+        <tr class="bg-gray-50">
+          <%= yield :header %>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <%= yield :body %>
+      </tbody>
+    </table>
+  </div>
+  <% if content_for?(:pagination) %>
+    <div class="bg-white border-t border-gray-200 px-4 py-3">
+      <%= yield :pagination %>
+    </div>
+  <% end %>
+</div>

@@ -1,25 +1,83 @@
 <% content_for :title, "Subjects" %>
 
-<div class="w-full">
+<div class="p-6 max-w-[90rem] mx-auto">
   <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+    <div class="mb-6">
+      <p class="py-2 px-3 bg-green-50 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+    </div>
   <% end %>
 
-  <div class="flex justify-between items-center">
-    <h1 class="font-bold text-4xl">Subjects</h1>
-    <%= link_to "New subject", new_subject_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %>
+  <div class="sm:flex sm:items-center sm:justify-between mb-8">
+    <h1 class="text-2xl font-semibold text-gray-900">Subjects</h1>
+    <%= link_to "New subject", new_subject_path, 
+        class: "inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" %>
   </div>
 
-  <div id="subjects" class="min-w-full">
+  <% content_for :header do %>
+    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Name</th>
+    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Slug</th>
+    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Active Courses</th>
+    <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+      <span class="sr-only">Actions</span>
+    </th>
+  <% end %>
+
+  <% content_for :body do %>
     <% if @subjects.any? %>
       <% @subjects.each do |subject| %>
-        <%= render subject %>
-        <p>
-          <%= link_to "Show this subject", subject, class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-        </p>
+        <tr class="hover:bg-gray-50">
+          <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+            <%= subject.name %>
+          </td>
+          <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+            <span class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+              <%= subject.slug %>
+            </span>
+          </td>
+          <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+            <% if subject.courses.any? %>
+              <span class="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                <%= subject.courses.count %> courses
+              </span>
+            <% else %>
+              <span class="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+                No courses
+              </span>
+            <% end %>
+          </td>
+          <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+            <div class="flex justify-end gap-2">
+              <%= link_to "View", subject, class: "text-blue-600 hover:text-blue-900" %>
+              <%= link_to "Edit", edit_subject_path(subject), class: "text-blue-600 hover:text-blue-900" %>
+              <%= button_to "Delete", subject, 
+                  method: :delete,
+                  class: "text-red-600 hover:text-red-900",
+                  data: { turbo_confirm: "Are you sure?" },
+                  form: { class: 'inline-block' } %>
+            </div>
+          </td>
+        </tr>
       <% end %>
-    <% else %>
-      <p class="text-center my-10">No subjects found.</p>
     <% end %>
-  </div>
+  <% end %>
+
+  <%= render "shared/table" %>
+
+  <% if @subjects.empty? %>
+    <div class="text-center">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+      </svg>
+      <h3 class="mt-2 text-sm font-semibold text-gray-900">No subjects</h3>
+      <p class="mt-1 text-sm text-gray-500">Get started by creating a new subject.</p>
+      <div class="mt-6">
+        <%= link_to new_subject_path, class: "inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" do %>
+          <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+          </svg>
+          New Subject
+        <% end %>
+      </div>
+    </div>
+  <% end %>
 </div>
