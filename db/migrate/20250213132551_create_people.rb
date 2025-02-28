@@ -4,7 +4,6 @@ class CreatePeople < ActiveRecord::Migration[8.0]
       t.string :username
       t.string :lastname
       t.string :firstname
-      t.string :email
       t.string :phone_number
       t.references :address, null: false, foreign_key: true
       t.references :status, null: false, foreign_key: true
