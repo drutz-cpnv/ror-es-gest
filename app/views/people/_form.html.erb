@@ -1,70 +1,66 @@
-<%= form_with(model: person, class: "space-y-8 divide-y divide-gray-200") do |form| %>
-  <div class="space-y-8 divide-y divide-gray-200">
+<%= form_with(model: person, class: "max-w-2xl mx-auto bg-white rounded-lg shadow-sm") do |form| %>
+  <div class="p-6 space-y-6">
     <div>
+      <h3 class="text-xl text-gray-800 font-medium">User Information</h3>
+      <p class="mt-1 text-sm text-gray-500">Please fill in all required information.</p>
+    </div>
+
+    <div class="space-y-4">
       <div>
-        <h3 class="text-lg font-medium leading-6 text-gray-900">User Information</h3>
-        <p class="mt-1 text-sm text-gray-500">Please fill in all required information.</p>
+        <%= form.label :email, class: "text-sm text-gray-600" %>
+        <div class="mt-1">
+          <%= form.email_field :email, class: "mt-1 block w-full px-3 py-2 text-gray-600 bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 transition duration-150" %>
+        </div>
+        <% if person.errors[:email].any? %>
+          <p class="mt-1 text-sm text-rose-500"><%= person.errors[:email].join(", ") %></p>
+        <% end %>
       </div>
 
-      <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-        <div class="sm:col-span-4">
-          <%= form.label :email, class: "block text-sm font-medium text-gray-700" %>
-          <div class="mt-1">
-            <%= form.email_field :email, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
-          </div>
-          <% if person.errors[:email].any? %>
-            <p class="mt-2 text-sm text-red-600"><%= person.errors[:email].join(", ") %></p>
-          <% end %>
+      <div>
+        <%= form.label :password, class: "text-sm text-gray-600" %>
+        <div class="mt-1">
+          <%= form.password_field :password, class: "mt-1 block w-full px-3 py-2 text-gray-600 bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 transition duration-150" %>
         </div>
+        <% if person.errors[:password].any? %>
+          <p class="mt-1 text-sm text-rose-500"><%= person.errors[:password].join(", ") %></p>
+        <% end %>
+      </div>
 
-        <div class="sm:col-span-4">
-          <%= form.label :password, class: "block text-sm font-medium text-gray-700" %>
-          <div class="mt-1">
-            <%= form.password_field :password, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
-          </div>
-          <% if person.errors[:password].any? %>
-            <p class="mt-2 text-sm text-red-600"><%= person.errors[:password].join(", ") %></p>
-          <% end %>
+      <div>
+        <%= form.label :password_confirmation, class: "text-sm text-gray-600" %>
+        <div class="mt-1">
+          <%= form.password_field :password_confirmation, class: "mt-1 block w-full px-3 py-2 text-gray-600 bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 transition duration-150" %>
         </div>
+      </div>
 
-        <div class="sm:col-span-4">
-          <%= form.label :password_confirmation, class: "block text-sm font-medium text-gray-700" %>
-          <div class="mt-1">
-            <%= form.password_field :password_confirmation, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
-          </div>
+      <div>
+        <%= form.label :type, class: "text-sm text-gray-600" %>
+        <div class="mt-1">
+          <%= form.select :type, Person.types, {}, class: "mt-1 block w-full px-3 py-2 text-gray-600 bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 transition duration-150" %>
         </div>
+        <% if person.errors[:type].any? %>
+          <p class="mt-1 text-sm text-rose-500"><%= person.errors[:type].join(", ") %></p>
+        <% end %>
+      </div>
 
-        <div class="sm:col-span-3">
-          <%= form.label :type, class: "block text-sm font-medium text-gray-700" %>
-          <div class="mt-1">
-            <%= form.select :type, Person.types, {}, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
-          </div>
-          <% if person.errors[:type].any? %>
-            <p class="mt-2 text-sm text-red-600"><%= person.errors[:type].join(", ") %></p>
-          <% end %>
+      <div>
+        <%= form.label :status_id, "Status", class: "text-sm text-gray-600" %>
+        <div class="mt-1">
+          <%= form.collection_select :status_id, Status.all, :id, :title, {}, class: "mt-1 block w-full px-3 py-2 text-gray-600 bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 transition duration-150" %>
         </div>
+      </div>
 
-        <div class="sm:col-span-3">
-          <%= form.label :status_id, "Status", class: "block text-sm font-medium text-gray-700" %>
-          <div class="mt-1">
-            <%= form.collection_select :status_id, Status.all, :id, :title, {}, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
-          </div>
-        </div>
-
-        <div class="sm:col-span-6">
-          <%= form.label :address_id, "Address", class: "block text-sm font-medium text-gray-700" %>
-          <div class="mt-1">
-            <%= form.collection_select :address_id, Address.all, :id, :full_address, {}, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
-          </div>
+      <div>
+        <%= form.label :address_id, "Address", class: "text-sm text-gray-600" %>
+        <div class="mt-1">
+          <%= form.collection_select :address_id, Address.all, :id, :full_address, {}, class: "mt-1 block w-full px-3 py-2 text-gray-600 bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 transition duration-150" %>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="pt-5">
-    <div class="flex justify-end">
-      <%= link_to "Cancel", people_path, class: "rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
-      <%= form.submit class: "ml-3 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
-    </div>
+  <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 rounded-b-lg flex justify-end space-x-3">
+    <%= link_to "Cancel", people_path, class: "px-4 py-2 text-sm text-gray-600 hover:text-gray-700 bg-white border border-gray-200 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 transition duration-150" %>
+    <%= form.submit class: "px-4 py-2 text-sm text-white bg-indigo-500 hover:bg-indigo-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 transition duration-150" %>
   </div>
 <% end %>
