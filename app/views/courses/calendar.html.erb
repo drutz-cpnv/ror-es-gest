@@ -1,0 +1,129 @@
+<% content_for :title, "Calendrier des cours" %>
+
+<div class="p-6 max-w-[90rem] mx-auto">
+  <% if notice.present? %>
+    <div class="mb-6">
+      <p class="py-2 px-3 bg-green-50 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+    </div>
+  <% end %>
+
+  <div class="sm:flex sm:items-center sm:justify-between mb-8">
+    <h1 class="text-2xl font-semibold text-gray-900">Calendrier des cours</h1>
+    <div class="flex space-x-2 mt-4 sm:mt-0">
+      <%= link_to "Vue liste", courses_path, 
+          class: "inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" %>
+      <%= link_to "Nouveau cours", new_course_path, 
+          class: "inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" %>
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6">
+    <h2 class="text-lg font-medium text-gray-900 mb-4">Filtres</h2>
+    
+    <%= form_with url: calendar_courses_path, method: :get, class: "grid grid-cols-1 md:grid-cols-2 gap-4" do |f| %>
+      <div>
+        <%= f.label :moment_id, "Semestre", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.select :moment_id, 
+            options_from_collection_for_select(@moments, :id, :uid, params[:moment_id]), 
+            { include_blank: "Tous les semestres" }, 
+            { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm", onchange: "this.form.submit()" } %>
+      </div>
+      
+      <div>
+        <%= f.label :school_class_id, "Classe", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.select :school_class_id, 
+            options_from_collection_for_select(@school_classes, :id, :name, params[:school_class_id]), 
+            { include_blank: "Toutes les classes" }, 
+            { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm", onchange: "this.form.submit()" } %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Calendrier -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <div class="grid grid-cols-5 border-b border-gray-200">
+      <div class="p-4 font-semibold text-center border-r border-gray-200">Lundi</div>
+      <div class="p-4 font-semibold text-center border-r border-gray-200">Mardi</div>
+      <div class="p-4 font-semibold text-center border-r border-gray-200">Mercredi</div>
+      <div class="p-4 font-semibold text-center border-r border-gray-200">Jeudi</div>
+      <div class="p-4 font-semibold text-center">Vendredi</div>
+    </div>
+    
+    <div class="grid grid-cols-5 min-h-[600px]">
+      <% [:monday, :tuesday, :wednesday, :thursday, :friday].each do |day| %>
+        <div class="border-r border-gray-200 relative p-2 <%= day == :friday ? '' : 'border-r' %>">
+          <% if @courses_by_day[day].any? %>
+            <% @courses_by_day[day].each do |course| %>
+              <% 
+                # Calculer la position verticale en fonction de l'heure de début
+                start_minutes = course.start_at.hour * 60 + course.start_at.min
+                end_minutes = course.end_at.hour * 60 + course.end_at.min
+                duration_minutes = end_minutes - start_minutes
+                
+                # Convertir en pourcentage (en supposant que la journée commence à 8h et finit à 18h)
+                day_start_minutes = 8 * 60
+                day_end_minutes = 18 * 60
+                day_duration_minutes = day_end_minutes - day_start_minutes
+                
+                top_position = ((start_minutes - day_start_minutes).to_f / day_duration_minutes) * 100
+                height = (duration_minutes.to_f / day_duration_minutes) * 100
+                
+                # S'assurer que les valeurs sont dans les limites
+                top_position = [0, [top_position, 100].min].max
+                height = [1, [height, 100 - top_position].min].max
+              %>
+              
+              <div class="absolute rounded-md p-2 left-2 right-2 bg-blue-100 border border-blue-300 overflow-hidden"
+                   style="top: <%= top_position %>%; height: <%= height %>%;">
+                <div class="font-medium text-xs text-blue-800 truncate"><%= course.subject&.name %></div>
+                <div class="text-xs text-blue-600 truncate"><%= course.school_class&.name %></div>
+                <div class="text-xs text-blue-500">
+                  <%= "#{course.start_at&.strftime("%H:%M")} - #{course.end_at&.strftime("%H:%M")}" %>
+                </div>
+                <div class="text-xs text-blue-500 truncate"><%= course.teacher&.lastname %></div>
+                <div class="mt-1 flex space-x-1">
+                  <%= link_to "Voir", course, class: "text-xs text-blue-700 hover:text-blue-900" %>
+                </div>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="text-center text-gray-400 text-sm mt-4">Aucun cours</div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <% if @courses.empty? %>
+    <div class="text-center mt-6">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+      <h3 class="mt-2 text-sm font-semibold text-gray-900">Aucun cours trouvé</h3>
+      <p class="mt-1 text-sm text-gray-500">Ajustez vos filtres ou créez un nouveau cours.</p>
+      <div class="mt-6">
+        <%= link_to new_course_path, class: "inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" do %>
+          <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+          </svg>
+          Nouveau Cours
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<script>
+  // Script pour mettre à jour dynamiquement les classes disponibles en fonction du semestre sélectionné
+  document.addEventListener('DOMContentLoaded', function() {
+    const momentSelect = document.querySelector('select[name="moment_id"]');
+    const classSelect = document.querySelector('select[name="school_class_id"]');
+    
+    if (momentSelect && classSelect) {
+      momentSelect.addEventListener('change', function() {
+        // Le formulaire sera soumis automatiquement grâce à l'attribut onchange
+      });
+    }
+  });
+</script> 

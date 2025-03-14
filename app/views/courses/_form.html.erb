@@ -6,7 +6,7 @@
           <div class="flex">
             <div class="flex-shrink-0">
               <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd"/>
               </svg>
             </div>
             <div class="ml-3">
@@ -49,36 +49,59 @@
           <div class="sm:col-span-2">
             <%= form.label :week_day, class: "block text-sm font-medium leading-6 text-gray-900" %>
             <div class="mt-2">
-              <%= form.number_field :week_day, class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
+              <%= form.select :week_day, Course.week_days.keys.map { |day| [day.titleize, day] },
+                              { include_blank: "Select a day" },
+                              class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
             </div>
-            <p class="mt-3 text-sm leading-6 text-gray-600">Day of the week (1-7).</p>
+            <p class="mt-3 text-sm leading-6 text-gray-600">Day of the week.</p>
           </div>
         </div>
       </div>
 
       <div class="mt-10">
         <h2 class="text-sm font-semibold leading-7 text-gray-900">References</h2>
-        <p class="mt-1 text-sm leading-6 text-gray-600">Link this course to the corresponding class, subject, and moment.</p>
-        
+        <p class="mt-1 text-sm leading-6 text-gray-600">Link this course to the corresponding class, subject, and
+          moment.</p>
+
         <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div class="sm:col-span-2">
+            <%= form.label :moment_id, "Moment (Semester/Quarter)", class: "block text-sm font-medium leading-6 text-gray-900" %>
+            <div class="mt-2">
+              <%= form.collection_select :moment_id, @moments, :id, :display_name,
+                                         { include_blank: "Select a moment" },
+                                         { class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                                           id: "course_moment_id" } %>
+            </div>
+            <p class="mt-3 text-sm leading-6 text-gray-600">Select a semester or quarter.</p>
+          </div>
+
           <div class="sm:col-span-2">
             <%= form.label :school_class_id, "School Class", class: "block text-sm font-medium leading-6 text-gray-900" %>
             <div class="mt-2">
-              <%= form.text_field :school_class_id, class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
+              <%= form.collection_select :school_class_id, @school_classes, :id, :name,
+                                         { include_blank: "Select a class" },
+                                         { class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                                           id: "course_school_class_id" } %>
+            </div>
+            <p class="mt-3 text-sm leading-6 text-gray-600">Classes are filtered based on the selected moment.</p>
+          </div>
+
+          <div class="sm:col-span-2">
+            <%= form.label :teacher_id, "Teacher", class: "block text-sm font-medium leading-6 text-gray-900" %>
+            <div class="mt-2">
+              <%= form.collection_select :teacher_id, @teachers, :id, :lastname,
+                                         { include_blank: "Select a teacher" },
+                                         { class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                                           id: "course_teacher_id" } %>
             </div>
           </div>
 
           <div class="sm:col-span-2">
             <%= form.label :subject_id, "Subject", class: "block text-sm font-medium leading-6 text-gray-900" %>
             <div class="mt-2">
-              <%= form.text_field :subject_id, class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
-            </div>
-          </div>
-
-          <div class="sm:col-span-2">
-            <%= form.label :moment_id, "Moment", class: "block text-sm font-medium leading-6 text-gray-900" %>
-            <div class="mt-2">
-              <%= form.text_field :moment_id, class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
+              <%= form.collection_select :subject_id, @subjects, :id, :name,
+                                         { include_blank: "Select a subject" },
+                                         { class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" } %>
             </div>
           </div>
         </div>
@@ -91,3 +114,191 @@
     </div>
   </div>
 <% end %>
+
+<script>
+    // Fonction pour initialiser le filtrage des classes
+    function initializeClassFiltering() {
+        console.log("Initializing class filtering...");
+
+        const momentSelect = document.getElementById('course_moment_id');
+        const classSelect = document.getElementById('course_school_class_id');
+
+        if (!momentSelect || !classSelect) {
+            console.error("Select elements not found");
+            return;
+        }
+
+        console.log("Initial moment value:", momentSelect.value);
+        console.log("Initial class value:", classSelect.value);
+
+        // Variable pour suivre la dernière requête
+        let lastRequest = null;
+
+        // Fonction pour mettre à jour les classes en fonction du moment sélectionné
+        async function updateSchoolClasses() {
+            console.log("Updating school classes...");
+
+            // Sauvegarder la valeur actuellement sélectionnée
+            const currentSelectedClassId = classSelect.value;
+            console.log("Current selected class ID:", currentSelectedClassId);
+
+            // Vider les options actuelles (sauf la première)
+            while (classSelect.options.length > 1) {
+                classSelect.remove(1);
+            }
+
+            // Si aucun moment n'est sélectionné, ne rien faire
+            if (!momentSelect.value) {
+                console.log("No moment selected");
+                return;
+            }
+
+            const selectedMomentId = parseInt(momentSelect.value);
+            console.log("Selected moment ID:", selectedMomentId);
+
+            // Annuler la requête précédente si elle existe
+            if (lastRequest) {
+                console.log("Cancelling previous request");
+                lastRequest.abort();
+            }
+
+            try {
+                // Créer un contrôleur d'abandon pour cette requête
+                const controller = new AbortController();
+                lastRequest = controller;
+
+                console.log(`Fetching classes for moment ID ${selectedMomentId}...`);
+                // Récupérer directement les classes correspondant au moment sélectionné
+                const classesResponse = await fetch(`/school_classes/by_moment/${selectedMomentId}`, {
+                    signal: controller.signal,
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!classesResponse.ok) {
+                    throw new Error(`Failed to get classes: ${classesResponse.status}`);
+                }
+
+                const classes = await classesResponse.json();
+                console.log("Classes received:", classes);
+
+                // Ajouter les options de classes
+                if (classes.length === 0) {
+                    console.log("No classes found for this moment");
+
+                    // Ajouter un message d'option désactivée
+                    const option = document.createElement('option');
+                    option.disabled = true;
+                    option.textContent = "No classes available for this moment";
+                    classSelect.appendChild(option);
+                } else {
+                    // Variable pour suivre si la classe précédemment sélectionnée est disponible
+                    let previousSelectionFound = false;
+
+                    // Ajouter les options de classes
+                    classes.forEach(schoolClass => {
+                        const option = document.createElement('option');
+                        option.value = schoolClass.id;
+                        option.textContent = schoolClass.name;
+                        
+                        // Si cette classe était précédemment sélectionnée, la sélectionner à nouveau
+                        if (schoolClass.id.toString() === currentSelectedClassId) {
+                            option.selected = true;
+                            previousSelectionFound = true;
+                            console.log("Re-selected previously selected class:", schoolClass.name);
+                        }
+                        
+                        classSelect.appendChild(option);
+                    });
+                    
+                    console.log(`Added ${classes.length} class options, previous selection found: ${previousSelectionFound}`);
+                    
+                    // Si nous sommes en mode édition et que c'est le chargement initial, conserver la sélection
+                    if (!previousSelectionFound && currentSelectedClassId && document.querySelector('form').dataset.mode === 'edit') {
+                        // Essayer de récupérer les détails de la classe actuellement sélectionnée
+                        fetch(`/school_classes/${currentSelectedClassId}/details`)
+                            .then(response => {
+                                if (response.ok) return response.json();
+                                throw new Error('Failed to fetch class details');
+                            })
+                            .then(classData => {
+                                // Ajouter cette classe comme option même si elle n'appartient pas au moment sélectionné
+                                const option = document.createElement('option');
+                                option.value = classData.id;
+                                option.textContent = classData.name + ' (from different year)';
+                                option.selected = true;
+                                classSelect.appendChild(option);
+                                console.log("Added current class from different year:", classData.name);
+                            })
+                            .catch(error => console.error("Error fetching class details:", error));
+                    }
+                }
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    console.log("Request was aborted");
+                } else {
+                    console.error("Error updating school classes:", error);
+
+                    // Ajouter un message d'erreur comme option
+                    const option = document.createElement('option');
+                    option.disabled = true;
+                    option.textContent = "Error loading classes";
+                    classSelect.appendChild(option);
+                }
+            } finally {
+                // Réinitialiser la requête en cours si c'est celle-ci
+                if (lastRequest === controller) {
+                    lastRequest = null;
+                }
+            }
+        }
+
+        // Ajouter l'écouteur d'événement avec un délai pour éviter les requêtes multiples
+        let debounceTimer;
+        momentSelect.addEventListener('change', function () {
+            console.log("Moment select changed to:", momentSelect.value);
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(updateSchoolClasses, 100);
+        });
+
+        // Initialiser si un moment est déjà sélectionné
+        if (momentSelect.value) {
+            console.log("Moment already selected, initializing...");
+            updateSchoolClasses();
+        }
+    }
+
+    // Fonction pour s'assurer que l'initialisation n'est exécutée qu'une seule fois
+    let initialized = false;
+
+    function ensureInitialized() {
+        if (!initialized) {
+            console.log("Initializing class filtering (first time)");
+            
+            // Déterminer si nous sommes en mode édition ou création
+            const form = document.querySelector('form');
+            const isEdit = window.location.href.includes('/edit');
+            form.dataset.mode = isEdit ? 'edit' : 'new';
+            console.log("Form mode:", form.dataset.mode);
+            
+            initializeClassFiltering();
+            initialized = true;
+        } else {
+            console.log("Class filtering already initialized");
+        }
+    }
+
+    // Exécuter l'initialisation quand le DOM est chargé
+    document.addEventListener('DOMContentLoaded', ensureInitialized);
+
+    // Également pour Turbo (si utilisé)
+    document.addEventListener('turbo:load', ensureInitialized);
+
+    // Exécuter immédiatement si le document est déjà chargé
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        console.log("Document already loaded, initializing immediately");
+        setTimeout(ensureInitialized, 100);
+    }
+</script>

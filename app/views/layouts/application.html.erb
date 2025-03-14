@@ -1,150 +1,149 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= content_for(:title) || "Ror Es Gest" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
+<head>
+  <title><%= content_for(:title) || "Ror Es Gest" %></title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
 
-    <%= yield :head %>
+  <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+  <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+  <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
+  <link rel="icon" href="/icon.png" type="image/png">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
-  </head>
+  <%# Includes all stylesheet files in app/assets/stylesheets %>
+  <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+  <%= javascript_importmap_tags %>
+</head>
 
-  <body class="bg-gray-100">
-    <!-- Flash messages -->
-    <% if notice %>
-      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-        <span class="block sm:inline"><%= notice %></span>
+<body class="bg-gray-100">
+<!-- Flash messages -->
+<% if notice %>
+  <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+    <span class="block sm:inline"><%= notice %></span>
+  </div>
+<% end %>
+<% if alert %>
+  <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+    <span class="block sm:inline"><%= alert %></span>
+  </div>
+<% end %>
+
+<% if person_signed_in? %>
+
+  <header>
+    <div class="flex items-center justify-between px-6 py-4">
+      <div>
+        <h1 class="text-xl font-semibold text-gray-900">Gestion ES</h1>
       </div>
-    <% end %>
-    <% if alert %>
-      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-        <span class="block sm:inline"><%= alert %></span>
+      <div class="flex items-center space-x-4">
+        <span class="text-gray-600">
+          <%= current_person.email %> (<%= current_person.type %>)
+        </span>
+        <%= button_to destroy_person_session_path, method: :delete, class: "text-red-600 hover:text-red-800 cursor-pointer" do %>
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+          </svg>
+        <% end %>
       </div>
-    <% end %>
+    </div>
+  </header>
+  <!-- Sidebar -->
 
-    <% if person_signed_in? %>
-      <!-- Sidebar -->
-      <aside class="fixed inset-y-0 left-0 bg-white w-64 shadow-lg">
-        <div class="p-6">
-          <h1 class="text-2xl font-bold text-gray-800">Ror Es Gest</h1>
-        </div>
-        <nav class="mt-6">
-          <%= link_to root_path, class: "flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-800" do %>
+  <!-- Main content area -->
+  <div class="h-full flex">
+    <aside class="w-64">
+      <nav class="mt-6">
+        <%= link_to root_path, class: "flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-800" do %>
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+          </svg>
+          Dashboard
+        <% end %>
+
+        <% if can? :manage, Person %>
+          <%= link_to people_path, class: "flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-800" do %>
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
             </svg>
-            Dashboard
+            People
           <% end %>
-          
-          <% if can? :manage, Person %>
-            <%= link_to people_path, class: "flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-800" do %>
-              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
-              </svg>
-              People
-            <% end %>
+        <% end %>
+
+        <% if can? :read, Course %>
+          <%= link_to courses_path, class: "flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-800" do %>
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            </svg>
+            Courses
           <% end %>
+        <% end %>
 
-          <% if can? :read, Course %>
-            <%= link_to courses_path, class: "flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-800" do %>
-              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-              </svg>
-              Courses
-            <% end %>
+        <% if can? :read, Grade %>
+          <%= link_to grades_path, class: "flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-800" do %>
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            Grades
           <% end %>
+        <% end %>
 
-          <% if can? :read, Grade %>
-            <%= link_to grades_path, class: "flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-800" do %>
-              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-              </svg>
-              Grades
-            <% end %>
+        <% if can? :read, Examination %>
+          <%= link_to examinations_path, class: "flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-800" do %>
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            Examinations
           <% end %>
+        <% end %>
 
-          <% if can? :read, Examination %>
-            <%= link_to examinations_path, class: "flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-800" do %>
-              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              Examinations
-            <% end %>
+        <% if can? :read, SchoolClass %>
+          <%= link_to school_classes_path, class: "flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-800" do %>
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            </svg>
+            Classes
           <% end %>
+        <% end %>
 
-          <% if can? :read, SchoolClass %>
-            <%= link_to school_classes_path, class: "flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-800" do %>
-              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-              </svg>
-              Classes
-            <% end %>
+        <% if can? :read, Subject %>
+          <%= link_to subjects_path, class: "flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-800" do %>
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            </svg>
+            Subjects
           <% end %>
+        <% end %>
 
-          <% if can? :read, Subject %>
-            <%= link_to subjects_path, class: "flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-800" do %>
-              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-              </svg>
-              Subjects
-            <% end %>
+        <% if can? :read, Moment %>
+          <%= link_to moments_path, class: "flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-800" do %>
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            Moments
           <% end %>
+        <% end %>
+      </nav>
+    </aside>
 
-          <% if can? :read, Moment %>
-            <%= link_to moments_path, class: "flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-800" do %>
-              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-              </svg>
-              Moments
-            <% end %>
-          <% end %>
-        </nav>
-      </aside>
-
-      <!-- Main content area -->
-      <div class="ml-64">
-        <header class="bg-white shadow-sm">
-          <div class="flex items-center justify-between px-6 py-4">
-            <div class="flex items-center">
-              <h2 class="text-xl font-semibold text-gray-800"><%= content_for(:page_title) %></h2>
-            </div>
-            <div class="flex items-center space-x-4">
-              <span class="text-gray-600">
-                <%= current_person.email %> (<%= current_person.type %>)
-              </span>
-              <%= button_to destroy_person_session_path, method: :delete, class: "text-red-600 hover:text-red-800" do %>
-                <div class="flex items-center">
-                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                  </svg>
-                  Logout
-                </div>
-              <% end %>
-            </div>
-          </div>
-        </header>
-
-        <main class="p-6">
-          <%= yield %>
-        </main>
+    <main class="p-6 bg-white shadow-md rounded-md m-2 basis-full overflow-y-auto" style="height: calc(100vh - 78px)">
+      <div class="sm:flex sm:items-center sm:justify-between">
+        <%= content_for(:page_header) %>
       </div>
-    <% else %>
-      <main class="min-h-screen flex items-center justify-center bg-gray-100">
-        <%= yield %>
-      </main>
-    <% end %>
-  </body>
+
+      <%= yield %>
+    </main>
+  </div>
+<% else %>
+  <main class="flex items-center justify-center bg-gray-100" style="height: calc(100vh - 100px)">
+    <%= yield %>
+  </main>
+<% end %>
+</body>
 </html>

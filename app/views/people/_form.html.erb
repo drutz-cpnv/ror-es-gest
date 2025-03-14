@@ -31,6 +31,41 @@
 
         <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div class="sm:col-span-3">
+            <%= form.label :username, class: "block text-sm font-medium leading-6 text-gray-900" %>
+            <div class="mt-2">
+              <%= form.text_field :username, class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
+            </div>
+          </div>
+
+          <div class="sm:col-span-3">
+            <%= form.label :lastname, class: "block text-sm font-medium leading-6 text-gray-900" %>
+            <div class="mt-2">
+              <%= form.text_field :lastname, class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
+            </div>
+          </div>
+
+          <div class="sm:col-span-3">
+            <%= form.label :firstname, class: "block text-sm font-medium leading-6 text-gray-900" %>
+            <div class="mt-2">
+              <%= form.text_field :firstname, class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
+            </div>
+          </div>
+
+          <div class="sm:col-span-3">
+            <%= form.label :phone_number, class: "block text-sm font-medium leading-6 text-gray-900" %>
+            <div class="mt-2">
+              <%= form.telephone_field :phone_number, class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
+            </div>
+          </div>
+
+          <div class="sm:col-span-3">
+            <%= form.label :iban, class: "block text-sm font-medium leading-6 text-gray-900" %>
+            <div class="mt-2">
+              <%= form.text_field :iban, class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
+            </div>
+          </div>
+
+          <div class="sm:col-span-3">
             <%= form.label :email, class: "block text-sm font-medium leading-6 text-gray-900" %>
             <div class="mt-2">
               <%= form.email_field :email, class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
@@ -60,22 +95,59 @@
         </div>
       </div>
 
+      <div class="mt-10 border-b border-gray-900/10 pb-12">
+        <h2 class="text-sm font-semibold leading-7 text-gray-900">Address Information</h2>
+        <p class="mt-1 text-sm leading-6 text-gray-600">Select an existing address or create a new one.</p>
+
+        <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+
+          <div class="sm:col-span-6">
+            <div id="new_address_fields">
+              <%= fields_for :address do |address_form| %>
+                <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                  <div class="sm:col-span-2">
+                    <%= address_form.label :zip, class: "block text-sm font-medium leading-6 text-gray-900" %>
+                    <div class="mt-2">
+                      <%= address_form.number_field :zip, class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
+                    </div>
+                  </div>
+
+                  <div class="sm:col-span-4">
+                    <%= address_form.label :town, class: "block text-sm font-medium leading-6 text-gray-900" %>
+                    <div class="mt-2">
+                      <%= address_form.text_field :town, class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
+                    </div>
+                  </div>
+
+                  <div class="sm:col-span-4">
+                    <%= address_form.label :street, class: "block text-sm font-medium leading-6 text-gray-900" %>
+                    <div class="mt-2">
+                      <%= address_form.text_field :street, class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
+                    </div>
+                  </div>
+
+                  <div class="sm:col-span-2">
+                    <%= address_form.label :number, class: "block text-sm font-medium leading-6 text-gray-900" %>
+                    <div class="mt-2">
+                      <%= address_form.text_field :number, class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="mt-10">
         <h2 class="text-sm font-semibold leading-7 text-gray-900">Additional Information</h2>
-        <p class="mt-1 text-sm leading-6 text-gray-600">Select the status and address for this person.</p>
+        <p class="mt-1 text-sm leading-6 text-gray-600">Select the status for this person.</p>
 
         <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div class="sm:col-span-3">
             <%= form.label :status_id, "Status", class: "block text-sm font-medium leading-6 text-gray-900" %>
             <div class="mt-2">
               <%= form.collection_select :status_id, Status.all, :id, :title, {}, class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
-            </div>
-          </div>
-
-          <div class="sm:col-span-3">
-            <%= form.label :address_id, "Address", class: "block text-sm font-medium leading-6 text-gray-900" %>
-            <div class="mt-2">
-              <%= form.collection_select :address_id, Address.all, :id, :full_address, {}, class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
             </div>
           </div>
         </div>

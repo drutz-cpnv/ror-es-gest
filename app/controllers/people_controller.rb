@@ -25,6 +25,19 @@ class PeopleController < ApplicationController
   def create
     @person = Person.new(person_params)
 
+    # Gérer la création d'une nouvelle adresse si nécessaire
+    if params[:address_option] == 'new' && params[:address].present?
+      address = Address.new(address_params)
+      if address.save
+        @person.address = address
+      else
+        @person.valid? # Déclencher les validations pour afficher toutes les erreurs
+        render :new and return
+      end
+    end
+
+    @person.username =
+
     if @person.save
       redirect_to @person, notice: 'Person was successfully created.'
     else
@@ -34,6 +47,17 @@ class PeopleController < ApplicationController
 
   # PATCH/PUT /people/1 or /people/1.json
   def update
+    # Gérer la création d'une nouvelle adresse si nécessaire
+    if params[:address_option] == 'new' && params[:address].present?
+      address = Address.new(address_params)
+      if address.save
+        @person.address = address
+      else
+        @person.valid? # Déclencher les validations pour afficher toutes les erreurs
+        render :edit and return
+      end
+    end
+
     if @person.update(person_params)
       redirect_to @person, notice: 'Person was successfully updated.'
     else
@@ -55,7 +79,14 @@ class PeopleController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def person_params
-      params.require(:person).permit(:email, :password, :password_confirmation, :type, :address_id, :status_id)
+      params.require(:person).permit(:email, :password, :password_confirmation, :type, 
+                                     :address_id, :status_id, :username, :lastname, 
+                                     :firstname, :phone_number, :iban)
+    end
+
+    # Paramètres pour la création d'une nouvelle adresse
+    def address_params
+      params.require(:address).permit(:zip, :town, :street, :number)
     end
 
     def ensure_dean

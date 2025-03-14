@@ -6,10 +6,26 @@ Rails.application.routes.draw do
   resources :promotion_asserts
   resources :grades
   resources :examinations
-  resources :courses
-  resources :school_classes
+  resources :courses do
+    collection do
+      get :calendar
+    end
+  end
+  resources :school_classes do
+    collection do
+      get 'by_year_moment/:year_moment_id', to: 'school_classes#by_year_moment', as: :by_year_moment
+      get 'by_moment/:moment_id', to: 'school_classes#by_moment', as: :by_moment
+    end
+    member do
+      get 'details', to: 'school_classes#get_class_details', as: :details
+    end
+  end
   resources :subjects
-  resources :moments
+  resources :moments do
+    collection do
+      get 'get_year_for_moment/:moment_id', to: 'moments#get_year_for_moment', as: :get_year_for_moment
+    end
+  end
   resources :sectors
   resources :rooms
   resources :addresses

@@ -57,14 +57,43 @@ class MomentsController < ApplicationController
     end
   end
 
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_moment
-      @moment = Moment.find(params.expect(:id))
+  # GET /moments/get_year_for_moment/:moment_id
+  def get_year_for_moment
+    moment_id = params[:moment_id]
+
+    if moment_id.present?
+      moment = Moment.find(moment_id)
+
+      case moment.moment_type.to_i
+      when 0 # Année
+        # C'est déjà une année, on la retourne directement
+        render json: { year_moment_id: moment.id, year_uid: moment.uid }
+        return
+      when 1, 2 # Semestre ou Trimestre
+        # Extraire l'année du UID (ex: "Y2023S1" -> "Y2023")
+        year_uid = moment.uid.match(/Y\d+/).to_s
+        year_moment = Moment.find_by(uid: year_uid)
+
+        if year_moment
+          render json: { year_moment_id: year_moment.id, year_uid: year_moment.uid }
+          return
+        end
+      end
     end
 
-    # Only allow a list of trusted parameters through.
-    def moment_params
-      params.expect(moment: [ :uid, :start_on, :end_on, :moment_type ])
-    end
+    # Si on arrive ici, c'est qu'on n'a pas trouvé de moment année
+    render json: { error: "No year moment found" }, status: :not_found
+  end
+
+  private
+
+  # Use callbacks to share common setup or constraints between actions.
+  def set_moment
+    @moment = Moment.find(params.expect(:id))
+  end
+
+  # Only allow a list of trusted parameters through.
+  def moment_params
+    params.expect(moment: [:uid, :start_on, :end_on, :moment_type])
+  end
 end
