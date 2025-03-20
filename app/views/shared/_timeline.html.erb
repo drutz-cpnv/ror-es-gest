@@ -1,0 +1,115 @@
+<%# Timeline component for displaying hierarchical moments %>
+<div class="timeline bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden p-6">
+  <h2 class="text-lg font-semibold text-gray-900 mb-6">Timeline des moments</h2>
+  
+  <% if years.any? %>
+    <div class="flow-root">
+      <ul role="list" class="-mb-8">
+        <% years.each_with_index do |year, year_index| %>
+          <li>
+            <div class="relative pb-8">
+              <% if year_index < years.size - 1 %>
+                <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+              <% end %>
+              <div class="relative flex space-x-3">
+                <div>
+                  <span class="h-8 w-8 rounded-full bg-amber-100 flex items-center justify-center ring-8 ring-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-600" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                    </svg>
+                  </span>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div>
+                    <div class="text-sm font-medium text-gray-900">
+                      <%= year.uid %> - <%= year.display_name %>
+                    </div>
+                    <p class="mt-0.5 text-sm text-gray-500">
+                      <%= "#{year.start_on&.strftime("%d %b %Y")} - #{year.end_on&.strftime("%d %b %Y")}" %>
+                    </p>
+                  </div>
+                  
+                  <% semesters = year.instance_variable_get(:@semesters) %>
+                  <% if semesters&.any? %>
+                    <div class="mt-4 ml-8">
+                      <ul role="list" class="-mb-8">
+                        <% semesters.each_with_index do |semester, semester_index| %>
+                          <li>
+                            <div class="relative pb-8">
+                              <% if semester_index < semesters.size - 1 %>
+                                <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                              <% end %>
+                              <div class="relative flex space-x-3">
+                                <div>
+                                  <span class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center ring-8 ring-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
+                                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                                    </svg>
+                                  </span>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                  <div>
+                                    <div class="text-sm font-medium text-gray-900">
+                                      <%= semester.uid %> - <%= semester.display_name %>
+                                    </div>
+                                    <p class="mt-0.5 text-sm text-gray-500">
+                                      <%= "#{semester.start_on&.strftime("%d %b %Y")} - #{semester.end_on&.strftime("%d %b %Y")}" %>
+                                    </p>
+                                  </div>
+                                  
+                                  <% quarters = semester.instance_variable_get(:@quarters) %>
+                                  <% if quarters&.any? %>
+                                    <div class="mt-4 ml-8">
+                                      <ul role="list" class="-mb-8">
+                                        <% quarters.each_with_index do |quarter, quarter_index| %>
+                                          <li>
+                                            <div class="relative pb-8">
+                                              <% if quarter_index < quarters.size - 1 %>
+                                                <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                                              <% end %>
+                                              <div class="relative flex space-x-3">
+                                                <div>
+                                                  <span class="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center ring-8 ring-white">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                                                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                                                    </svg>
+                                                  </span>
+                                                </div>
+                                                <div class="min-w-0 flex-1">
+                                                  <div>
+                                                    <div class="text-sm font-medium text-gray-900">
+                                                      <%= quarter.uid %> - <%= quarter.display_name %>
+                                                    </div>
+                                                    <p class="mt-0.5 text-sm text-gray-500">
+                                                      <%= "#{quarter.start_on&.strftime("%d %b %Y")} - #{quarter.end_on&.strftime("%d %b %Y")}" %>
+                                                    </p>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </li>
+                                        <% end %>
+                                      </ul>
+                                    </div>
+                                  <% end %>
+                                </div>
+                              </div>
+                            </div>
+                          </li>
+                        <% end %>
+                      </ul>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% else %>
+    <div class="text-center py-6">
+      <p class="text-gray-500">Aucun moment n'a été créé</p>
+    </div>
+  <% end %>
+</div> 
