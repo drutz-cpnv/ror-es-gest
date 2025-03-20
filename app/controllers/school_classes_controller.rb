@@ -6,10 +6,6 @@ class SchoolClassesController < ApplicationController
     @school_classes = SchoolClass.all
   end
 
-  # GET /school_classes/1 or /school_classes/1.json
-  def show
-  end
-
   # GET /school_classes/new
   def new
     @school_class = SchoolClass.new
@@ -122,7 +118,7 @@ class SchoolClassesController < ApplicationController
   def get_class_details
     school_class_id = params[:id]
     Rails.logger.debug "get_class_details called with id: #{school_class_id}"
-    
+
     begin
       school_class = SchoolClass.find(school_class_id)
       render json: { id: school_class.id, name: school_class.name, moment_id: school_class.moment_id }
@@ -130,6 +126,196 @@ class SchoolClassesController < ApplicationController
       Rails.logger.error "School class not found with id: #{school_class_id}"
       render json: { error: "School class not found" }, status: :not_found
     end
+  end
+
+  # GET /school_classes/:id
+  def show
+    @school_class = SchoolClass.find(params[:id])
+    @students = @school_class.students.order(:lastname, :firstname)
+    @courses = @school_class.courses.includes(:subject, :teacher, :moment)
+    @teachers = Teacher.joins(:courses).where(courses: { school_class_id: @school_class.id }).distinct
+    @moments = Moment.all
+    @subjects = Subject.joins(:courses).where(courses: { school_class_id: @school_class.id }).distinct
+
+    # Récupérer toutes les évaluations pour cette classe
+    course_ids = @courses.pluck(:id)
+    @examinations = Examination.where(course_id: course_ids)
+                               .includes(course: [:subject, :teacher, :moment], grades: [:student])
+                               .order(effective_date: :desc)
+
+    # Regrouper les examens par étudiant et par matière pour le bulletin
+    @grades_by_student = {}
+    @students.each do |student|
+      @grades_by_student[student.id] = {}
+      @school_class.courses.each do |course|
+        examinations = course.examinations
+        grades = Grade.where(examination_id: examinations.pluck(:id), student_id: student.id)
+
+        if grades.any?
+          @grades_by_student[student.id][course.subject_id] = {
+            grades: grades,
+            average: grades.average(:value).to_f.round(2)
+          }
+        end
+      end
+    end
+  end
+
+  # GET /school_classes/:id/students
+  def students
+    @school_class = SchoolClass.find(params[:id])
+    @students = @school_class.students.order(:lastname, :firstname)
+
+    respond_to do |format|
+      format.html { render partial: 'students', locals: { students: @students } }
+      format.json { render json: @students }
+    end
+  end
+
+  # GET /school_classes/:id/courses
+  def courses
+    @school_class = SchoolClass.find(params[:id])
+    moment_id = params[:moment_id]
+
+    @courses = @school_class.courses
+    @courses = @courses.where(moment_id: moment_id) if moment_id.present?
+    @courses = @courses.includes(:subject, :teacher)
+
+    respond_to do |format|
+      format.html { render partial: 'courses', locals: { courses: @courses } }
+      format.json { render json: @courses }
+    end
+  end
+
+  # GET /school_classes/:id/grades
+  def grades
+    @school_class = SchoolClass.find(params[:id])
+    @students = @school_class.students.order(:lastname, :firstname)
+    @subjects = Subject.joins(:courses).where(courses: { school_class_id: @school_class.id }).distinct
+
+    # Regrouper les examens par étudiant et par matière pour le bulletin
+    @grades_by_student = {}
+    @students.each do |student|
+      @grades_by_student[student.id] = {}
+      @school_class.courses.each do |course|
+        examinations = course.examinations
+        grades = Grade.where(examination_id: examinations.pluck(:id), student_id: student.id)
+
+        if grades.any?
+          @grades_by_student[student.id][course.subject_id] = {
+            grades: grades,
+            average: grades.average(:value).to_f.round(2)
+          }
+        end
+      end
+    end
+
+    respond_to do |format|
+      format.html { render partial: 'grades', locals: { students: @students, subjects: @subjects, grades_by_student: @grades_by_student } }
+      format.json { render json: @grades_by_student }
+    end
+  end
+
+  # GET /school_classes/:id/teachers
+  def teachers
+    @school_class = SchoolClass.find(params[:id])
+    @teachers = Teacher.joins(:courses).where(courses: { school_class_id: @school_class.id }).distinct
+
+    respond_to do |format|
+      format.html { render partial: 'teachers', locals: { teachers: @teachers } }
+      format.json { render json: @teachers }
+    end
+  end
+
+  # POST /school_classes/:id/add_student
+  def add_student
+    @school_class = SchoolClass.find(params[:id])
+
+    # Si un ID d'étudiant existant est fourni
+    if params[:student_id].present?
+      student = Student.find(params[:student_id])
+      # Sinon, créer un nouvel étudiant
+    elsif params[:firstname].present? && params[:lastname].present?
+      student = Student.new(
+        firstname: params[:firstname],
+        lastname: params[:lastname],
+        email: params[:email]
+      )
+      unless student.save
+        flash[:alert] = "Erreur lors de la création de l'élève: #{student.errors.full_messages.join(', ')}"
+        redirect_to @school_class and return
+      end
+    else
+      flash[:alert] = "Veuillez sélectionner un élève existant ou remplir les champs requis pour en créer un nouveau."
+      redirect_to @school_class and return
+    end
+
+    # Associer l'étudiant à la classe
+    unless @school_class.students.include?(student)
+      @school_class.students << student
+      flash[:notice] = "L'élève a été ajouté à la classe avec succès."
+    else
+      flash[:alert] = "Cet élève est déjà dans la classe."
+    end
+
+    redirect_to @school_class
+  end
+
+  # POST /school_classes/:id/add_course
+  def add_course
+    @school_class = SchoolClass.find(params[:id])
+
+    # Vérifier que tous les paramètres nécessaires sont présents
+    if params[:subject_id].blank? || params[:teacher_id].blank? || params[:moment_id].blank? ||
+      params[:week_day].blank? || params[:start_time].blank? || params[:end_time].blank?
+      flash[:alert] = "Tous les champs sont requis pour ajouter un cours."
+      redirect_to @school_class and return
+    end
+
+    # Créer le cours
+    course = Course.new(
+      school_class_id: @school_class.id,
+      subject_id: params[:subject_id],
+      teacher_id: params[:teacher_id],
+      moment_id: params[:moment_id],
+      week_day: params[:week_day],
+      start_time: params[:start_time],
+      end_time: params[:end_time]
+    )
+
+    if course.save
+      flash[:notice] = "Le cours a été ajouté avec succès."
+    else
+      flash[:alert] = "Erreur lors de l'ajout du cours: #{course.errors.full_messages.join(', ')}"
+    end
+
+    redirect_to @school_class
+  end
+
+  # POST /school_classes/:id/add_examination
+  def add_examination
+    @school_class = SchoolClass.find(params[:id])
+
+    # Vérifier que tous les paramètres nécessaires sont présents
+    if params[:course_id].blank? || params[:title].blank? || params[:effective_date].blank?
+      flash[:alert] = "Le cours, le titre et la date sont requis pour ajouter une évaluation."
+      redirect_to @school_class and return
+    end
+
+    # Créer l'évaluation
+    examination = Examination.new(
+      course_id: params[:course_id],
+      title: params[:title],
+      effective_date: params[:effective_date],
+    )
+
+    if examination.save
+      flash[:notice] = "L'évaluation a été ajoutée avec succès."
+    else
+      flash[:alert] = "Erreur lors de l'ajout de l'évaluation: #{examination.errors.full_messages.join(', ')}"
+    end
+
+    redirect_to @school_class
   end
 
   private
