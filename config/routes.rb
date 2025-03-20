@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  devise_for :people
+  devise_for :people, controllers: { sessions: 'sessions' }
   resources :statuses
   resources :student_classes
   resources :people
@@ -18,6 +18,13 @@ Rails.application.routes.draw do
     end
     member do
       get 'details', to: 'school_classes#get_class_details', as: :details
+      get 'students', to: 'school_classes#students', as: :students
+      get 'courses', to: 'school_classes#courses', as: :courses
+      get 'grades', to: 'school_classes#grades', as: :grades
+      get 'teachers', to: 'school_classes#teachers', as: :teachers
+      post 'add_student', to: 'school_classes#add_student', as: :add_student
+      post 'add_course', to: 'school_classes#add_course', as: :add_course
+      post 'add_examination', to: 'school_classes#add_examination', as: :add_examination
     end
   end
   resources :subjects
