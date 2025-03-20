@@ -3,7 +3,25 @@ class MomentsController < ApplicationController
 
   # GET /moments or /moments.json
   def index
-    @moments = Moment.all
+    all_moments = Moment.all.order(:start_on)
+    
+    # Récupérer les années
+    @years = all_moments.select { |m| m.moment_type == "year" }
+    
+    # Pour chaque année, récupérer ses semestres
+    @years.each do |year|
+      year_uid = year.uid
+      year.instance_variable_set(:@semesters, all_moments.select { |m| m.moment_type == "semester" && m.uid.start_with?(year_uid) })
+      
+      # Pour chaque semestre, récupérer ses trimestres
+      year.instance_variable_get(:@semesters).each do |semester|
+        semester_uid = semester.uid
+        semester.instance_variable_set(:@quarters, all_moments.select { |m| m.moment_type == "quarter" && m.uid.start_with?(semester_uid) })
+      end
+    end
+    
+    # Garder aussi tous les moments pour l'affichage en tableau
+    @moments = all_moments
   end
 
   # GET /moments/1 or /moments/1.json
