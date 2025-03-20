@@ -1,0 +1,46 @@
+<h2 class="text-2xl font-semibold mb-4">Bulletin de notes</h2>
+<div class="bg-white shadow-md rounded-lg overflow-hidden">
+  <% students.each do |student| %>
+    <div class="p-6 border-b border-gray-200">
+      <h3 class="text-xl font-semibold mb-4"><%= "#{student.firstname} #{student.lastname}" %></h3>
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+        <tr>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matière</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Moyenne</th>
+        </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+        <% student_grades = grades_by_student[student.id] || {} %>
+        <% student_grades.each do |subject_id, data| %>
+          <% subject = Subject.find_by(id: subject_id) %>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= subject&.name %></td>
+            <td class="px-6 py-4 text-sm text-gray-500">
+              <% data[:grades].each do |grade| %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 mr-2">
+                    <%= grade.value %>
+                  </span>
+              <% end %>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold">
+              <%= data[:average] %>
+            </td>
+          </tr>
+        <% end %>
+        <!-- Calcul de la moyenne générale -->
+        <% if student_grades.present? %>
+          <tr class="bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">Moyenne générale</td>
+            <td class="px-6 py-4 text-sm text-gray-500"></td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
+              <%= (student_grades.sum { |_, data| data[:average] } / student_grades.size).round(2) %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</div> 

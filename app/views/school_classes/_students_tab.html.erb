@@ -1,0 +1,32 @@
+<div class="flex justify-between items-center mb-4">
+  <h2 class="text-2xl font-semibold">Liste des élèves</h2>
+  <button @click="studentModal = true" class="rounded-md bg-indigo-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+    Ajouter un élève
+  </button>
+</div>
+<div class="bg-white shadow-md rounded-lg overflow-hidden">
+  <table class="min-w-full divide-y divide-gray-200">
+    <thead class="bg-gray-50">
+    <tr>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prénom</th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+    </tr>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200">
+    <% students.each do |student| %>
+      <tr>
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><%= student.id %></td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= student.lastname %></td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= student.firstname %></td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= student.email %></td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+          <%= link_to "Voir", person_path(student), class: "text-indigo-600 hover:text-indigo-900" %>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div> 

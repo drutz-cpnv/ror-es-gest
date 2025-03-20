@@ -1,0 +1,47 @@
+<div class="bg-white shadow-md rounded-lg overflow-hidden">
+  <div class="p-6">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matière</th>
+          <% students.each do |student| %>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <%= "#{student.first_name} #{student.last_name}" %>
+            </th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <% subjects.each do |subject| %>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><%= subject.name %></td>
+            <% students.each do |student| %>
+              <td class="px-6 py-4 text-sm text-gray-500">
+                <% student_grades = grades_by_student[student.id] || {} %>
+                <% if student_grades[subject.id] && student_grades[subject.id][:grades].present? %>
+                  <%= student_grades[subject.id][:grades].map { |grade| grade.value }.join(", ") %>
+                <% else %>
+                  <span class="text-gray-400">-</span>
+                <% end %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+        <!-- Ligne des moyennes générales -->
+        <tr class="bg-gray-50">
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">Moyenne générale</td>
+          <% students.each do |student| %>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
+              <% student_grades = grades_by_student[student.id] || {} %>
+              <% if student_grades.present? %>
+                <%= (student_grades.sum { |_, data| data[:average] } / student_grades.size).round(2) %>
+              <% else %>
+                -
+              <% end %>
+            </td>
+          <% end %>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div> 

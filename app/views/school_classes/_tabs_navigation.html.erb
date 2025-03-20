@@ -1,0 +1,39 @@
+<div class="border-b border-gray-200">
+  <nav class="flex -mb-px" aria-label="Tabs">
+    <button
+      @click="activeTab = 'students'"
+      :class="{ 'border-indigo-500 text-indigo-600': activeTab === 'students', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'students' }"
+      class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm mr-8"
+    >
+      Liste des élèves
+    </button>
+    <button
+      @click="activeTab = 'courses'"
+      :class="{ 'border-indigo-500 text-indigo-600': activeTab === 'courses', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'courses' }"
+      class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm mr-8"
+    >
+      Cours
+    </button>
+    <button
+      @click="activeTab = 'examinations'"
+      :class="{ 'border-indigo-500 text-indigo-600': activeTab === 'examinations', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'examinations' }"
+      class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm mr-8"
+    >
+      Évaluations
+    </button>
+    <button
+      @click="activeTab = 'grades'"
+      :class="{ 'border-indigo-500 text-indigo-600': activeTab === 'grades', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'grades' }"
+      class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm mr-8"
+    >
+      Bulletin de notes
+    </button>
+    <button
+      @click="activeTab = 'teachers'"
+      :class="{ 'border-indigo-500 text-indigo-600': activeTab === 'teachers', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'teachers' }"
+      class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+    >
+      Enseignants
+    </button>
+  </nav>
+</div> 

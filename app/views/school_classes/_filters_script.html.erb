@@ -1,0 +1,57 @@
+<script>
+  document.addEventListener('turbo:load', function () {
+    const momentFilter = document.getElementById('moment-filter');
+    const coursesTableBody = document.getElementById('courses-table-body');
+    
+    const subjectFilter = document.getElementById('examination-subject-filter');
+    const momentExamFilter = document.getElementById('examination-moment-filter');
+    const examinationsTableBody = document.getElementById('examinations-table-body');
+
+    if (momentFilter && coursesTableBody) {
+      momentFilter.addEventListener('change', function () {
+        const selectedMomentId = this.value;
+        const rows = coursesTableBody.querySelectorAll('tr');
+
+        rows.forEach(function (row) {
+          const momentId = row.getAttribute('data-moment-id');
+          if (!selectedMomentId || momentId === selectedMomentId) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        });
+      });
+    }
+    
+    // Filtres pour les évaluations
+    function filterExaminations() {
+      if (!examinationsTableBody) return;
+      
+      const selectedSubjectId = subjectFilter ? subjectFilter.value : '';
+      const selectedMomentId = momentExamFilter ? momentExamFilter.value : '';
+      const rows = examinationsTableBody.querySelectorAll('tr');
+      
+      rows.forEach(function (row) {
+        const subjectId = row.getAttribute('data-subject-id');
+        const momentId = row.getAttribute('data-moment-id');
+        
+        const subjectMatch = !selectedSubjectId || subjectId === selectedSubjectId;
+        const momentMatch = !selectedMomentId || momentId === selectedMomentId;
+        
+        if (subjectMatch && momentMatch) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+    
+    if (subjectFilter) {
+      subjectFilter.addEventListener('change', filterExaminations);
+    }
+    
+    if (momentExamFilter) {
+      momentExamFilter.addEventListener('change', filterExaminations);
+    }
+  });
+</script> 

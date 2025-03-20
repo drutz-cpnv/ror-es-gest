@@ -1,0 +1,53 @@
+<% content_for :title, "#{@school_class.name}" %>
+
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="font-bold text-4xl">Dashboard - <%= @school_class.name %></h1>
+    <%= link_to "← Retour aux classes", school_classes_path, class: "rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+  </div>
+
+  <!-- Détails de la classe -->
+  <%= render 'class_details', school_class: @school_class, students: @students %>
+
+  <div x-data="{ 
+    activeTab: 'students', 
+    studentModal: false,
+    courseModal: false,
+    examinationModal: false
+  }" class="mb-8">
+    <!-- Navigation des onglets -->
+    <%= render 'tabs_navigation' %>
+
+    <!-- Onglet Liste des élèves -->
+    <div x-show="activeTab === 'students'" class="mt-6">
+      <%= render 'students_tab', school_class: @school_class, students: @students %>
+    </div>
+
+    <!-- Onglet Cours -->
+    <div x-show="activeTab === 'courses'" class="mt-6">
+      <%= render 'courses_tab', school_class: @school_class, courses: @courses, moments: @moments %>
+    </div>
+
+    <!-- Onglet Évaluations -->
+    <div x-show="activeTab === 'examinations'" class="mt-6">
+      <%= render 'examinations_tab', school_class: @school_class, examinations: @examinations, subjects: @subjects, moments: @moments %>
+    </div>
+
+    <!-- Onglet Bulletin de notes -->
+    <div x-show="activeTab === 'grades'" class="mt-6">
+      <%= render 'grades_tab', school_class: @school_class, students: @students, grades_by_student: @grades_by_student %>
+    </div>
+
+    <!-- Onglet Enseignants -->
+    <div x-show="activeTab === 'teachers'" class="mt-6">
+      <%= render 'teachers_tab', school_class: @school_class, teachers: @teachers %>
+    </div>
+  
+    <!-- Modales -->
+    <%= render 'student_modal', school_class: @school_class, students: @students %>
+    <%= render 'course_modal', school_class: @school_class, subjects: Subject.all, teachers: Teacher.all, moments: @moments %>
+    <%= render 'examination_modal', school_class: @school_class, courses: @courses %>
+  </div>
+</div>
+
+<%= render 'filters_script' %> 

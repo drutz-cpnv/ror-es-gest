@@ -1,0 +1,64 @@
+<div class="bg-white border-1 border-gray-200 rounded-lg overflow-hidden mb-8">
+  <div class="p-6">
+    <h2 class="text-xl font-semibold mb-4">Informations sur la classe</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div>
+        <h3 class="text-sm font-medium text-gray-500">Enseignant principal</h3>
+        <p class="mt-1 text-base font-semibold">
+          <% if school_class.teacher %>
+            <%= "#{school_class.teacher.firstname} #{school_class.teacher.lastname}" %>
+          <% else %>
+            <span class="text-gray-400">Non assigné</span>
+          <% end %>
+        </p>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-gray-500">Salle</h3>
+        <p class="mt-1 text-base font-semibold">
+          <% if school_class.room %>
+            <%= school_class.room.name %>
+          <% else %>
+            <span class="text-gray-400">Non assignée</span>
+          <% end %>
+        </p>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-gray-500">Nombre d'élèves</h3>
+        <p class="mt-1 text-base font-semibold"><%= students.count %></p>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-gray-500">Secteur</h3>
+        <p class="mt-1 text-base font-semibold">
+          <% if school_class.sector %>
+            <%= school_class.sector.name %>
+          <% else %>
+            <span class="text-gray-400">Non assigné</span>
+          <% end %>
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-6">
+      <h3 class="text-sm font-medium text-gray-500">Informations sur la période</h3>
+      <% if school_class.moment %>
+        <div class="mt-1 text-base flex items-center gap-2">
+          <p>
+            <span class="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10">
+              <%= school_class.moment.uid %>
+            </span>
+          </p>
+          <p class="font-semibold">
+            <% if school_class.moment.start_on && school_class.moment.end_on %>
+              Du <%= school_class.moment.start_on.strftime('%d/%m/%Y') %>
+              au <%= school_class.moment.end_on.strftime('%d/%m/%Y') %>
+            <% else %>
+              <span class="text-gray-400">Dates non définies</span>
+            <% end %>
+          </p>
+        </div>
+      <% else %>
+        <p class="mt-1 text-base font-semibold text-gray-400">Période non assignée</p>
+      <% end %>
+    </div>
+  </div>
+</div> 
