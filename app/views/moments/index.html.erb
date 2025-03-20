@@ -13,72 +13,95 @@
         class: "inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" %>
   </div>
 
-  <% content_for :header do %>
-    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">UID</th>
-    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Type</th>
-    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Period</th>
-    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Duration</th>
-    <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
-      <span class="sr-only">Actions</span>
-    </th>
-  <% end %>
+  <div class="mb-6">
+    <div class="tabs flex border-b border-gray-200" x-data="{ activeTab: 'timeline' }">
+      <button id="timeline-tab" 
+              class="py-3 px-4 font-medium text-sm"
+              :class="activeTab === 'timeline' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'"
+              @click="activeTab = 'timeline'">
+        Timeline
+      </button>
+      <button id="table-tab" 
+              class="py-3 px-4 font-medium text-sm"
+              :class="activeTab === 'table' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'"
+              @click="activeTab = 'table'">
+        Tableau
+      </button>
+    </div>
+  </div>
 
-  <% content_for :body do %>
-    <% if @moments.any? %>
-      <% @moments.each do |moment| %>
-        <tr class="hover:bg-gray-50">
-          <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-            <%= moment.uid %>
-          </td>
-          <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-            <% type_colors = {
-              'year' => 'bg-amber-50 text-amber-700 ring-amber-700/10',
-              'semester' => 'bg-blue-50 text-blue-700 ring-blue-700/10',
-              'quarter' => 'bg-green-50 text-green-700 ring-green-700/10'
-            } %>
-            <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset <%= type_colors[moment.moment_type] || 'bg-gray-50 text-gray-700 ring-gray-700/10' %>">
-              <%= moment.moment_type&.titleize %>
-            </span>
-          </td>
-          <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-            <%= "#{moment.start_on&.strftime("%d %b %Y")} - #{moment.end_on&.strftime("%d %b %Y")}" %>
-          </td>
-          <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-            <%= pluralize((moment.end_on - moment.start_on).to_i, "day") if moment.start_on && moment.end_on %>
-          </td>
-          <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-            <div class="flex justify-end gap-2">
-              <%= link_to "View", moment, class: "text-blue-600 hover:text-blue-900" %>
-              <%= link_to "Edit", edit_moment_path(moment), class: "text-blue-600 hover:text-blue-900" %>
-              <%= button_to "Delete", moment, 
-                  method: :delete,
-                  class: "text-red-600 hover:text-red-900",
-                  data: { turbo_confirm: "Are you sure?" },
-                  form: { class: 'inline-block' } %>
-            </div>
-          </td>
-        </tr>
+  <div id="timeline-view" class="mb-10" x-show="activeTab === 'timeline'">
+    <%= render "shared/timeline", years: @years %>
+  </div>
+
+  <div id="table-view" x-show="activeTab === 'table'">
+    <% content_for :header do %>
+      <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">UID</th>
+      <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Type</th>
+      <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Period</th>
+      <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Duration</th>
+      <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+        <span class="sr-only">Actions</span>
+      </th>
+    <% end %>
+
+    <% content_for :body do %>
+      <% if @moments.any? %>
+        <% @moments.each do |moment| %>
+          <tr class="hover:bg-gray-50">
+            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+              <%= moment.uid %>
+            </td>
+            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+              <% type_colors = {
+                'year' => 'bg-amber-50 text-amber-700 ring-amber-700/10',
+                'semester' => 'bg-blue-50 text-blue-700 ring-blue-700/10',
+                'quarter' => 'bg-green-50 text-green-700 ring-green-700/10'
+              } %>
+              <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset <%= type_colors[moment.moment_type] || 'bg-gray-50 text-gray-700 ring-gray-700/10' %>">
+                <%= moment.moment_type&.titleize %>
+              </span>
+            </td>
+            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+              <%= "#{moment.start_on&.strftime("%d %b %Y")} - #{moment.end_on&.strftime("%d %b %Y")}" %>
+            </td>
+            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+              <%= pluralize((moment.end_on - moment.start_on).to_i, "day") if moment.start_on && moment.end_on %>
+            </td>
+            <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+              <div class="flex justify-end gap-2">
+                <%= link_to "View", moment, class: "text-blue-600 hover:text-blue-900" %>
+                <%= link_to "Edit", edit_moment_path(moment), class: "text-blue-600 hover:text-blue-900" %>
+                <%= button_to "Delete", moment, 
+                    method: :delete,
+                    class: "text-red-600 hover:text-red-900",
+                    data: { turbo_confirm: "Are you sure?" },
+                    form: { class: 'inline-block' } %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
       <% end %>
     <% end %>
-  <% end %>
 
-  <%= render "shared/table" %>
+    <%= render "shared/table" %>
 
-  <% if @moments.empty? %>
-    <div class="text-center">
-      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-      </svg>
-      <h3 class="mt-2 text-sm font-semibold text-gray-900">No moments</h3>
-      <p class="mt-1 text-sm text-gray-500">Get started by creating a new moment.</p>
-      <div class="mt-6">
-        <%= link_to new_moment_path, class: "inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" do %>
-          <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-          </svg>
-          New Moment
-        <% end %>
+    <% if @moments.empty? %>
+      <div class="text-center">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <h3 class="mt-2 text-sm font-semibold text-gray-900">No moments</h3>
+        <p class="mt-1 text-sm text-gray-500">Get started by creating a new moment.</p>
+        <div class="mt-6">
+          <%= link_to new_moment_path, class: "inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" do %>
+            <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+            </svg>
+            New Moment
+          <% end %>
+        </div>
       </div>
-    </div>
-  <% end %>
+    <% end %>
+  </div>
 </div>

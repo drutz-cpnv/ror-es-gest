@@ -99,6 +99,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_28_084809) do
   create_table "people_school_classes", id: false, force: :cascade do |t|
     t.integer "person_id", null: false
     t.integer "school_class_id", null: false
+    t.index ["person_id", "school_class_id"], name: "index_people_school_classes_on_person_id_and_school_class_id"
+    t.index ["school_class_id", "person_id"], name: "index_people_school_classes_on_school_class_id_and_person_id"
   end
 
   create_table "promotion_asserts", force: :cascade do |t|

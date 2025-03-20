@@ -1,17 +1,126 @@
-<% content_for :title, "Showing course" %>
+<% content_for :title, @course.subject&.name || "Détails du cours" %>
 
-<div class="md:w-2/3 w-full">
+<div class="w-full px-4 py-8 sm:px-6 lg:px-8 bg-white">
   <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+    <div class="mb-6">
+      <div class="p-4 bg-green-50 rounded-md border border-green-200" id="notice">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-green-800"><%= notice %></p>
+          </div>
+        </div>
+      </div>
+    </div>
   <% end %>
 
-  <h1 class="font-bold text-4xl">Showing course</h1>
+  <div class="border-b border-gray-200 pb-5 mb-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 leading-tight">
+          <% if @course.subject %>
+            <%= link_to @course.subject.name, subject_path(@course.subject), class: "hover:text-indigo-600 hover:underline" %>
+          <% else %>
+            Détails du cours
+          <% end %>
+        </h1>
+        <p class="mt-1 text-lg text-gray-600">
+          <% if @course.school_class %>
+            <%= link_to @course.school_class.name, school_class_path(@course.school_class), class: "hover:text-indigo-600 hover:underline" %>
+          <% else %>
+            Classe non spécifiée
+          <% end %>
+        </p>
+      </div>
+      <div class="flex space-x-3">
+        <%= link_to courses_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" do %>
+          <svg class="mr-2 -ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Retour
+        <% end %>
+        <%= link_to edit_course_path(@course), class: "inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" do %>
+          <svg class="mr-2 -ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+          Modifier
+        <% end %>
+      </div>
+    </div>
+  </div>
 
-  <%= render @course %>
-
-  <%= link_to "Edit this course", edit_course_path(@course), class: "mt-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-  <%= link_to "Back to courses", courses_path, class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-  <div class="inline-block ml-2">
-    <%= button_to "Destroy this course", @course, method: :delete, class: "mt-2 rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium" %>
+  <div class="mt-8">
+    <dl class="divide-y divide-gray-200">
+      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+        <dt class="text-sm font-medium text-gray-500">Jour de la semaine</dt>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+          <%= @course.week_day&.capitalize || "Non spécifié" %>
+        </dd>
+      </div>
+      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+        <dt class="text-sm font-medium text-gray-500">Heures</dt>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+          <%= @course.start_at&.strftime("%H:%M") || "Non spécifié" %> - <%= @course.end_at&.strftime("%H:%M") || "Non spécifié" %>
+        </dd>
+      </div>  
+      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+        <dt class="text-sm font-medium text-gray-500">Enseignant</dt>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+          <% if @course.teacher %>
+            <%= link_to @course.teacher.fullname, teacher_path(@course.teacher), class: "text-indigo-600 hover:text-indigo-900 hover:underline" %>
+          <% else %>
+            Non spécifié
+          <% end %>
+        </dd>
+      </div>
+      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+        <dt class="text-sm font-medium text-gray-500">Matière</dt>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+          <% if @course.subject %>
+            <%= link_to @course.subject.name, subject_path(@course.subject), class: "text-indigo-600 hover:text-indigo-900 hover:underline" %>
+          <% else %>
+            Non spécifié
+          <% end %>
+        </dd>
+      </div>
+      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+        <dt class="text-sm font-medium text-gray-500">Classe</dt>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+          <% if @course.school_class %>
+            <%= link_to @course.school_class.name, school_class_path(@course.school_class), class: "text-indigo-600 hover:text-indigo-900 hover:underline" %>
+          <% else %>
+            Non spécifié
+          <% end %>
+        </dd>
+      </div>
+      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+        <dt class="text-sm font-medium text-gray-500">Moment</dt>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+          <% if @course.moment %>
+            <%= link_to @course.moment.display_name, moment_path(@course.moment), class: "text-indigo-600 hover:text-indigo-900 hover:underline" %>
+          <% else %>
+            Non spécifié
+          <% end %>
+        </dd>
+      </div>
+    </dl>
+  </div>
+  
+  <div class="mt-10 pt-6 border-t border-gray-200 flex justify-between items-center">
+    <div class="text-sm text-gray-500">
+      <span>Dernière mise à jour: <%= @course.updated_at&.strftime("%d/%m/%Y à %H:%M") %></span>
+    </div>
+    <div>
+      <%= button_to @course, method: :delete, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500", data: { confirm: "Êtes-vous sûr de vouloir supprimer ce cours?" } do %>
+        <svg class="mr-2 -ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+        Supprimer
+      <% end %>
+    </div>
   </div>
 </div>

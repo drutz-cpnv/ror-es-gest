@@ -14,6 +14,10 @@ class Person < ApplicationRecord
     %w[Teacher Student Dean]
   end
 
+  def fullname
+    "#{firstname} #{lastname}"
+  end
+
   # Ensure subclasses can use Devise
   def self.inherited(child)
     child.include Devise::Models::DatabaseAuthenticatable
