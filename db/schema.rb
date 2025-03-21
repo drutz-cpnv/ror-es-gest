@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_28_084809) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_20_123842) do
   create_table "addresses", force: :cascade do |t|
     t.integer "zip"
     t.string "town"
@@ -46,7 +46,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_28_084809) do
   end
 
   create_table "grades", force: :cascade do |t|
-    t.integer "value"
+    t.float "value"
     t.date "execute_on"
     t.integer "examination_id", null: false
     t.integer "student_id", null: false
