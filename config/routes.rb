@@ -5,7 +5,12 @@ Rails.application.routes.draw do
   resources :people
   resources :promotion_asserts
   resources :grades
-  resources :examinations
+  resources :examinations do
+    member do
+      get 'students_with_grades', to: 'examinations#students_with_grades'
+      post 'save_grades', to: 'examinations#save_grades'
+    end
+  end
   resources :courses do
     collection do
       get :calendar
