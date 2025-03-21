@@ -231,10 +231,10 @@ class SchoolClassesController < ApplicationController
   def add_student
     @school_class = SchoolClass.find(params[:id])
 
-    # Si un ID d'étudiant existant est fourni
+    # If an existing student ID is provided
     if params[:student_id].present?
       student = Student.find(params[:student_id])
-      # Sinon, créer un nouvel étudiant
+    # Otherwise, create a new student
     elsif params[:firstname].present? && params[:lastname].present?
       student = Student.new(
         firstname: params[:firstname],
@@ -242,20 +242,20 @@ class SchoolClassesController < ApplicationController
         email: params[:email]
       )
       unless student.save
-        flash[:alert] = "Erreur lors de la création de l'élève: #{student.errors.full_messages.join(', ')}"
+        flash[:alert] = "Error creating student: #{student.errors.full_messages.join(', ')}"
         redirect_to @school_class and return
       end
     else
-      flash[:alert] = "Veuillez sélectionner un élève existant ou remplir les champs requis pour en créer un nouveau."
+      flash[:alert] = "Please select an existing student or fill in the required fields to create a new one."
       redirect_to @school_class and return
     end
 
-    # Associer l'étudiant à la classe
+    # Associate the student with the class
     unless @school_class.students.include?(student)
       @school_class.students << student
-      flash[:notice] = "L'élève a été ajouté à la classe avec succès."
+      flash[:notice] = "The student has been successfully added to the class."
     else
-      flash[:alert] = "Cet élève est déjà dans la classe."
+      flash[:alert] = "This student is already in the class."
     end
 
     redirect_to @school_class

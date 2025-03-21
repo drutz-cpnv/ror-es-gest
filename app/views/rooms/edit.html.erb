@@ -1,10 +1,21 @@
-<% content_for :title, "Editing room" %>
+<% content_for :title, "Edit Room: #{@room.name}" %>
 
-<div class="md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">Editing room</h1>
+<div class="p-6 max-w-[90rem] mx-auto">
+  <% if notice.present? %>
+    <div class="mb-6">
+      <p class="py-2 px-3 bg-green-50 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+    </div>
+  <% end %>
+
+  <div class="sm:flex sm:items-center sm:justify-between mb-8">
+    <h1 class="text-2xl font-semibold text-gray-900">Edit Room: <%= @room.name %></h1>
+    <div class="mt-4 sm:mt-0 flex flex-wrap gap-3">
+      <%= link_to "View room", @room, 
+          class: "inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" %>
+      <%= link_to "Back to rooms", rooms_path, 
+          class: "inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" %>
+    </div>
+  </div>
 
   <%= render "form", room: @room %>
-
-  <%= link_to "Show this room", @room, class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-  <%= link_to "Back to rooms", rooms_path, class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
 </div>

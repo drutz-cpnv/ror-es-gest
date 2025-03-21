@@ -36,18 +36,27 @@
 <% end %>
 
 <% if person_signed_in? %>
-
   <header>
     <div class="flex items-center justify-between px-6 py-4">
       <div>
-        <h1 class="text-xl font-semibold text-gray-900">Gestion ES</h1>
+        <h1 class="text-xl font-semibold text-gray-900 flex items-center">
+          <svg class="w-6 h-6 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+          </svg>
+          Gestion ES
+        </h1>
       </div>
       <div class="flex items-center space-x-4">
-        <span class="text-gray-600">
-          <%= current_person.email %> (<%= current_person.type %>)
-        </span>
-        <%= button_to destroy_person_session_path, method: :delete, class: "text-red-600 hover:text-red-800 cursor-pointer" do %>
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex items-center">
+          <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-800 font-semibold mr-2">
+            <%= current_person.firstname ? current_person.firstname[0] : current_person.email[0] %>
+          </div>
+          <span class="text-gray-600 hidden sm:inline">
+            <%= current_person.email %> <span class="text-xs px-2 py-1 rounded-full bg-gray-100"><%= current_person.type %></span>
+          </span>
+        </div>
+        <%= button_to destroy_person_session_path, method: :delete, class: "text-gray-500 hover:text-red-600 transition-colors duration-200 p-2 rounded-full hover:bg-gray-100" do %>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
           </svg>
         <% end %>
@@ -127,6 +136,15 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
             </svg>
             Moments
+          <% end %>
+        <% end %>
+
+        <% if can? :read, Room %>
+          <%= link_to rooms_path, class: "flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-800" do %>
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            </svg>
+            Rooms
           <% end %>
         <% end %>
       </nav>

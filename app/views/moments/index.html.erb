@@ -1,6 +1,6 @@
 <% content_for :title, "Moments" %>
 
-<div class="p-6 max-w-[90rem] mx-auto">
+<div class="p-6 max-w-[90rem] mx-auto" x-data="{ activeTab: 'timeline' }">
   <% if notice.present? %>
     <div class="mb-6">
       <p class="py-2 px-3 bg-green-50 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
@@ -14,7 +14,7 @@
   </div>
 
   <div class="mb-6">
-    <div class="tabs flex border-b border-gray-200" x-data="{ activeTab: 'timeline' }">
+    <div class="tabs flex border-b border-gray-200">
       <button id="timeline-tab" 
               class="py-3 px-4 font-medium text-sm"
               :class="activeTab === 'timeline' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'"

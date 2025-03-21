@@ -32,9 +32,15 @@
             <%= "#{grade.student&.lastname} #{grade.student&.firstname}" %>
           </td>
           <td class="whitespace-nowrap px-3 py-4 text-sm font-medium">
-            <span class="<%= grade.value >= 4 ? 'text-green-600' : 'text-red-600' %>">
+            <% if grade.value.present? %>
+            <span class="<%= grade.value >= 4.0 ? 'text-green-600' : 'text-red-600' %>">
               <%= grade.value %>
             </span>
+            <% else %>
+            <span>
+              Aucune note
+            </span>
+            <% end %>
           </td>
           <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
             <%= grade.execute_on&.strftime("%d %b %Y") %>
@@ -52,10 +58,9 @@
               <%= link_to "View", grade, class: "text-blue-600 hover:text-blue-900" %>
               <%= link_to "Edit", edit_grade_path(grade), class: "text-blue-600 hover:text-blue-900" %>
               <%= button_to "Delete", grade,
-                          method: :delete,
-                          class: "text-red-600 hover:text-red-900",
-                          data: { turbo_confirm: "Are you sure?" },
-                          form: { class: 'inline-block' } %>
+                            method: :delete,
+                            class: "text-red-600 hover:text-red-900",
+                            form: { class: 'inline-block' } %>
             </div>
           </td>
         </tr>
