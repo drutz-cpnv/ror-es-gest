@@ -57,14 +57,63 @@ class ExaminationsController < ApplicationController
     end
   end
 
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_examination
-      @examination = Examination.find(params.expect(:id))
+  # GET /examinations/1/students_with_grades
+  def students_with_grades
+    examination = Examination.find(params[:id])
+    school_class = examination.course.school_class
+
+    # Récupérer tous les élèves de la classe
+    students = school_class.students
+
+    # Pour chaque élève, vérifier s'il a déjà une note pour cet examen
+    students_data = students.map do |student|
+      grade = Grade.find_by(examination_id: examination.id, student_id: student.id)
+      {
+        id: student.id,
+        firstname: student.firstname,
+        lastname: student.lastname,
+        grade: grade&.value,
+      }
     end
 
-    # Only allow a list of trusted parameters through.
-    def examination_params
-      params.expect(examination: [ :title, :effective_date, :course_id ])
+    render json: students_data
+  end
+
+  # POST /examinations/1/save_grades
+  def save_grades
+    examination = Examination.find(params[:id])
+
+    ActiveRecord::Base.transaction do
+      params[:grades].each do |grade_data|
+        student_id = grade_data[:student_id]
+        grade_value = grade_data[:grade]
+
+        # Ne créer/mettre à jour la note que si une valeur a été fournie
+        if grade_value.present?
+          # Chercher une note existante ou en créer une nouvelle
+          grade = Grade.find_or_initialize_by(examination_id: examination.id, student_id: student_id)
+
+          # Mettre à jour ou définir les valeurs
+          grade.value = grade_value
+
+          # Sauvegarder la note
+          grade.save
+        end
+      end
     end
+
+    head :ok
+  end
+
+  private
+
+  # Use callbacks to share common setup or constraints between actions.
+  def set_examination
+    @examination = Examination.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def examination_params
+    params.require(:examination).permit(:title, :effective_date, :course_id)
+  end
 end
