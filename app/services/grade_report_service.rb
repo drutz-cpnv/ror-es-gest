@@ -28,10 +28,10 @@ class GradeReportService
       # Informations dans un cadre propre
       pdf.stroke_color light_gray
       pdf.line_width 1
-      pdf.stroke_rounded_rectangle [0, pdf.cursor], pdf.bounds.width, 200, 3
+      pdf.stroke_rounded_rectangle [0, pdf.cursor], pdf.bounds.width, 100, 3
 
       # Contenu du cadre des infos
-      pdf.bounding_box([10, pdf.cursor - 10], width: pdf.bounds.width - 20, height: 200) do
+      pdf.bounding_box([10, pdf.cursor - 10], width: pdf.bounds.width - 20, height: 100) do
         pdf.fill_color dark_gray
 
         # Colonne gauche
@@ -46,7 +46,7 @@ class GradeReportService
         end
 
         # Colonne droite
-        pdf.bounding_box([pdf.bounds.width / 2, pdf.cursor + 60], width: pdf.bounds.width / 2, height: 200) do
+        pdf.bounding_box([pdf.bounds.width / 2, pdf.cursor + 60], width: pdf.bounds.width / 2, height: 100) do
           pdf.font("Helvetica", style: :bold) do
             pdf.text "PÉRIODE", size: 10
           end
@@ -149,6 +149,7 @@ class GradeReportService
         begin
           eval @promotion_assert.function
           result = is_promoted(@grades)
+
 
           pdf.text_box "STATUT",
                        at: [0, pdf.cursor],
@@ -259,7 +260,6 @@ class GradeReportService
   def grades_table_data
     # En-tête du tableau
     header = ["Matière"]
-
     # Déterminer le nombre maximum d'examens pour une matière
     max_exams = 0
 

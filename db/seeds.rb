@@ -110,6 +110,15 @@ ActiveRecord::Base.transaction do
     )
     year_moments << year_moment
 
+    PromotionAssert.create!(
+      description: "Promotion si aucune note inférieur à 4",
+      function: "def is_promoted(grades)
+  return !grades.any? { |_, note| note < 4 }
+end",
+      moment: year_moment,
+      sector: sector
+    )
+
     # Semester moments:
     # Semester 1: Aug 21 to Jan 20
     s1 = Moment.create!(
@@ -269,5 +278,60 @@ ActiveRecord::Base.transaction do
     )
   end
 
-  puts "Seed data created successfully: Year, Semester, Quarter moments; classes; courses; students; extra teachers; and dean."
+  # --- Create Examinations and Grades ---
+  # Récupérer tous les cours créés
+  all_courses = Course.all
+  all_students = Student.all
+
+  # Pour chaque cours, créer plusieurs examens
+  exam_titles = [
+    "Contrôle des connaissances",
+    "Examen intermédiaire",
+    "Examen final",
+    "Test pratique",
+    "Évaluation continue",
+    "Quiz"
+  ]
+
+  all_courses.each do |course|
+    # Créer 2 à 4 examens pour chaque cours
+    num_exams = rand(2..4)
+
+    num_exams.times do |i|
+      # Date d'examen entre le début et la fin du moment
+      date_range = (course.moment.start_on + 2.weeks)..(course.moment.end_on - 2.weeks)
+      exam_date = Faker::Date.between(from: date_range.begin, to: date_range.end)
+
+      # Créer l'examen
+      examination = Examination.create!(
+        title: "#{exam_titles.sample} - #{course.subject.name}",
+        effective_date: exam_date,
+        course_id: course.id
+      )
+
+      # Récupérer tous les élèves de cette classe
+      class_students = course.school_class.students
+
+      # Pour chaque élève de la classe, créer une note (1.0 à 6.0)
+      class_students.each do |student|
+        # Générer une note entre 1.0 et 6.0 (précision de 0.5)
+        # Note moyenne en Suisse: entre 4.0 et 5.0 pour les bons élèves
+        if rand < 0.7 # 70% de chance d'avoir une bonne note
+          value = [4.0, 4.5, 5.0, 5.5, 6.0].sample
+        else
+          value = [1.0, 1.5, 2.0, 2.5, 3.0, 3.5].sample
+        end
+
+        # Créer la note pour cet élève
+        Grade.create!(
+          value: value,
+          execute_on: exam_date, # Date d'exécution identique à la date de l'examen
+          examination_id: examination.id,
+          student_id: student.id
+        )
+      end
+    end
+  end
+
+  puts "Seed data created successfully: Year, Semester, Quarter moments; classes; courses; students; extra teachers; dean; examinations and grades."
 end

@@ -14,6 +14,10 @@ class PromotionAssertsController < ApplicationController
   # GET /promotion_asserts/new
   def new
     @promotion_assert = PromotionAssert.new
+    @promotion_assert.function = "def is_promoted(grades)
+  return true unless grades.empty?
+  return true
+end"
   end
 
   # GET /promotion_asserts/1/edit
@@ -76,11 +80,6 @@ class PromotionAssertsController < ApplicationController
     @year_moments = Moment.where(moment_type: 0).order(:uid) # Années (0)
     @school_classes = SchoolClass.none
     @teachers = Teacher.all.order(:lastname, :firstname)
-
-    h = [
-      "hello",
-      "hello"
-    ]
 
     if params[:id].present? && @course&.school_class_id.present?
       @school_classes = SchoolClass.where(id: @course.school_class_id)
