@@ -71,3 +71,6 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+gem "prawn", "~> 2.5"
+gem "prawn-table"

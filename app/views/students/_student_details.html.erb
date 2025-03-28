@@ -1,0 +1,43 @@
+<div class="bg-white border-1 border-gray-200 rounded-lg overflow-hidden mb-4 mt-5">
+  <div class="p-6">
+    <h2 class="text-xl font-semibold mb-4">Informations sur l'étudiant</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div>
+        <h3 class="text-sm font-medium text-gray-500">Nom complet</h3>
+        <p class="mt-1 text-base font-semibold"><%= student.firstname %> <%= student.lastname %></p>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-gray-500">Email</h3>
+        <p class="mt-1 text-base font-semibold">
+          <% if student.email.present? %>
+            <%= student.email %>
+          <% else %>
+            <span class="text-gray-400">Non renseigné</span>
+          <% end %>
+        </p>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-gray-500">Classe actuelle</h3>
+        <p class="mt-1 text-base font-semibold">
+          <% current_class = student.school_classes.joins(:moment).order('moments.start_on DESC').first %>
+          <% if current_class %>
+            <%= current_class.name %>
+          <% else %>
+            <span class="text-gray-400">Aucune classe</span>
+          <% end %>
+        </p>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-gray-500">Nombre de notes</h3>
+        <p class="mt-1 text-base font-semibold"><%= Grade.where(student_id: student.id).count %></p>
+      </div>
+    </div>
+
+    <div class="mt-6">
+      <h3 class="text-sm font-medium text-gray-500">Historique des classes</h3>
+      <div class="mt-1 text-base">
+        <p class="font-semibold">Classes suivies : <%= student.school_classes.count %></p>
+      </div>
+    </div>
+  </div>
+</div> 

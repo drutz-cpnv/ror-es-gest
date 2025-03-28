@@ -1,37 +1,111 @@
-<%= form_with(model: promotion_assert, class: "contents") do |form| %>
-  <% if promotion_assert.errors.any? %>
-    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
-      <h2><%= pluralize(promotion_assert.errors.count, "error") %> prohibited this promotion_assert from being saved:</h2>
+<%= form_with(model: promotion_assert, class: "space-y-8 divide-y divide-gray-200") do |form| %>
+  <div class="bg-white ring-1 ring-gray-900/5 sm:rounded-xl">
+    <div class="px-4 py-6 sm:p-8">
+      <% if promotion_assert.errors.any? %>
+        <div class="rounded-md bg-red-50 p-4 mb-6">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-red-800">
+                <%= pluralize(promotion_assert.errors.count, "error") %> prohibited this promotion assert from being
+                saved:
+              </h3>
+              <div class="mt-2 text-sm text-red-700">
+                <ul class="list-disc pl-5 space-y-1">
+                  <% promotion_assert.errors.each do |error| %>
+                    <li><%= error.full_message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
 
-      <ul class="list-disc ml-6">
-        <% promotion_assert.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+      <div class="space-y-8 divide-y divide-gray-200">
+        <div>
+          <div>
+            <h3 class="text-lg font-medium leading-6 text-gray-900">Promotion Assert Information</h3>
+            <p class="mt-1 text-sm text-gray-500">
+              Provide the details for this promotion assert.
+            </p>
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+            <div class="sm:col-span-6">
+              <%= form.label :description, class: "block text-sm font-medium text-gray-700" %>
+              <div class="mt-1">
+                <%= form.text_field :description, class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6", placeholder: "Description of the promotion assert" %>
+              </div>
+              <p class="mt-2 text-sm text-gray-500">A clear description of the promotion assert.</p>
+            </div>
+
+            <div class="sm:col-span-6">
+              <%= form.label :function, class: "block text-sm font-medium text-gray-700" %>
+              <div class="mt-1">
+                <div id="editor" class="h-[500px] border border-gray-300 rounded-md overflow-hidden shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"></div>
+                <%= form.text_area :function, class: "hidden w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6", placeholder: "Function" %>
+              </div>
+              <p class="mt-2 text-sm text-gray-500">The function of this promotion assert.</p>
+            </div>
+
+            <div class="sm:col-span-3">
+              <%= form.label :moment_id, class: "block text-sm font-medium text-gray-700" %>
+              <div class="mt-1">
+                <%= form.collection_select :moment_id, @moments, :id, :display_name,
+                                           { include_blank: "Select a moment" },
+                                           { class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                                             id: "course_moment_id" } %>
+              </div>
+            </div>
+
+            <div class="sm:col-span-3">
+              <%= form.label :sector_id, class: "block text-sm font-medium text-gray-700" %>
+              <div class="mt-1">
+                <%= form.collection_select :sector_id, @sectors, :id, :name,
+                                           { include_blank: "Select a sector" },
+                                           { class: "block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                                             id: "course_sector_id" } %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-5">
+        <div class="flex justify-end">
+          <%= link_to "Cancel", promotion_asserts_path, class: "bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+          <%= form.submit class: "ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+        </div>
+      </div>
     </div>
-  <% end %>
-
-  <div class="my-5">
-    <%= form.label :description %>
-    <%= form.text_field :description, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": promotion_assert.errors[:description].none?, "border-red-400 focus:outline-red-600": promotion_assert.errors[:description].any?}] %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :function %>
-    <%= form.text_field :function, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": promotion_assert.errors[:function].none?, "border-red-400 focus:outline-red-600": promotion_assert.errors[:function].any?}] %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :moment_id %>
-    <%= form.text_field :moment_id, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": promotion_assert.errors[:moment_id].none?, "border-red-400 focus:outline-red-600": promotion_assert.errors[:moment_id].any?}] %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :sector_id %>
-    <%= form.text_field :sector_id, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": promotion_assert.errors[:sector_id].none?, "border-red-400 focus:outline-red-600": promotion_assert.errors[:sector_id].any?}] %>
-  </div>
-
-  <div class="inline">
-    <%= form.submit class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
   </div>
 <% end %>
+
+<script>
+    document.addEventListener("turbo:load", function () {
+        require.config({paths: {'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs'}});
+        require(["vs/editor/editor.main"], function () {
+            const editor = monaco.editor.create(document.getElementById("editor"), {
+                value: "def is_promoted(grades)\n" +
+                    "  return true\n" +
+                    "end",
+                language: "ruby",
+                theme: "vs-light"
+            });
+
+            const functionField = document.querySelector('textarea[name="promotion_assert[function]"]');
+            editor.onDidChangeModelContent(() => {
+                if (functionField) {
+                    functionField.value = editor.getValue();
+                }
+            });
+
+            editor.setValue(functionField.value)
+        });
+    })
+</script>

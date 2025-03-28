@@ -27,6 +27,12 @@
               @click="activeTab = 'table'">
         Tableau
       </button>
+      <button id="gantt-tab" 
+              class="py-3 px-4 font-medium text-sm"
+              :class="activeTab === 'gantt' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'"
+              @click="activeTab = 'gantt'">
+        Gantt
+      </button>
     </div>
   </div>
 
@@ -103,5 +109,145 @@
         </div>
       </div>
     <% end %>
+  </div>
+
+  <div id="gantt-view" x-show="activeTab === 'gantt'" class="mb-10">
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+      <div class="p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Diagramme de Gantt</h3>
+        
+        <div class="overflow-x-auto">
+          <div class="gantt-chart min-w-full" style="min-height: 400px;">
+            <% if @moments.any? %>
+              <div class="gantt-container">
+                <div class="gantt-header flex border-b border-gray-200">
+                  <div class="w-48 flex-shrink-0 py-2 px-3 bg-gray-50 font-medium text-sm text-gray-500">Moment</div>
+                  <div class="flex-grow overflow-hidden">
+                    <div class="flex">
+                      <% 
+                        # Determine date range for all moments
+                        start_date = @moments.map(&:start_on).compact.min
+                        end_date = @moments.map(&:end_on).compact.max
+                        
+                        # Default to current year if no moments or nil dates
+                        if start_date.nil? || end_date.nil?
+                          start_date = Date.today.beginning_of_year
+                          end_date = Date.today.end_of_year
+                        end
+                        
+                        # Add buffer to make sure all moments are fully visible
+                        start_date = start_date.beginning_of_month
+                        end_date = end_date.end_of_month
+                        
+                        # Calculate total days for positioning
+                        total_days = (end_date - start_date).to_i + 1
+                        
+                        # Generate months for header
+                        current_date = start_date.beginning_of_month
+                        months = []
+                        
+                        while current_date <= end_date
+                          months << current_date
+                          current_date = current_date.next_month
+                        end
+                        
+                        # Calculate width per day for consistent scaling
+                        day_width_percent = 100.0 / total_days
+                      %>
+                      
+                      <% months.each do |month| %>
+                        <% 
+                          # Calculate month width as percentage
+                          days_in_month = month.end_of_month.day
+                          month_width = days_in_month * day_width_percent
+                        %>
+                        <div class="text-center py-2 px-1 text-xs font-medium text-gray-500 -rotate-90 h-[80px] translate-x-8 translate-y-2 font-mono"
+                             style="min-width: <%= month_width %>%; width: <%= month_width %>%">
+                          <%= month.strftime("%m.%Y") %>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="gantt-body">
+                  <% 
+                    # Group moments by year
+                    moments_by_year = {}
+                    @moments.each do |moment|
+                      if moment.start_on
+                        year = moment.start_on.year
+                        moments_by_year[year] ||= []
+                        moments_by_year[year] << moment
+                      end
+                    end
+                    
+                    # Sort years in chronological order
+                    sorted_years = moments_by_year.keys.sort
+                  %>
+                  
+                  <% sorted_years.each do |year| %>
+                    <div class="border-b border-gray-200 bg-gray-50">
+                      <div class="flex">
+                        <div class="w-48 flex-shrink-0 py-3 px-3 text-sm font-medium text-gray-700">
+                          <%= year %>
+                        </div>
+                        <div class="flex-grow"></div>
+                      </div>
+                    </div>
+                    
+                    <% moments_by_year[year].each do |moment| %>
+                      <div class="flex border-b border-gray-100 hover:bg-gray-50">
+                        <div class="w-48 flex-shrink-0 py-3 px-3 pl-6 text-sm font-medium">
+                          <%= moment.uid %>
+                          <div class="text-xs text-gray-500"><%= moment.moment_type&.titleize %></div>
+                        </div>
+                        <div class="flex-grow relative py-3" style="height: 40px;">
+                          <% 
+                            if moment.start_on && moment.end_on
+                              # Calculate position and width relative to the entire timeline
+                              left_offset_days = [(moment.start_on - start_date).to_i, 0].max
+                              right_cutoff_days = [(end_date - moment.end_on).to_i, 0].max
+                              
+                              # Calculate percentage values
+                              left_percent = (left_offset_days.to_f / total_days * 100).round(2)
+                              width_percent = (((total_days - left_offset_days - right_cutoff_days).to_f) / total_days * 100).round(2)
+                              
+                              # Ensure minimum width for visibility
+                              width_percent = [width_percent, 0.5].max
+                              
+                              # Set color based on type
+                              bar_colors = {
+                                'year' => 'bg-amber-500',
+                                'semester' => 'bg-blue-500',
+                                'quarter' => 'bg-green-500'
+                              }
+                              bar_color = bar_colors[moment.moment_type] || 'bg-gray-500'
+                          %>
+                          
+                          <div class="absolute h-6 rounded <%= bar_color %> opacity-80 hover:opacity-100 transition-opacity"
+                               style="left: <%= left_percent %>%; width: <%= width_percent %>%; top: 8px;"
+                               title="<%= "#{moment.uid}: #{moment.start_on&.strftime("%d %b %Y")} - #{moment.end_on&.strftime("%d %b %Y")}" %>">
+                          </div>
+                          <% end %>
+                        </div>
+                      </div>
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+            <% else %>
+              <div class="text-center py-12">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <h3 class="mt-2 text-sm font-semibold text-gray-900">Aucun moment à afficher</h3>
+                <p class="mt-1 text-sm text-gray-500">Créez des moments pour visualiser le diagramme de Gantt.</p>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

@@ -3,4 +3,8 @@ class Student < Person
     join_table: "people_school_classes", 
     foreign_key: "person_id",
     association_foreign_key: "school_class_id"
+
+  def is_promoted(moment)
+    true
+  end
 end

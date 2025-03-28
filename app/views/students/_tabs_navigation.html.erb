@@ -1,0 +1,18 @@
+<div class="border-b border-gray-200">
+  <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+    <button
+      @click="activeTab = 'classes'"
+      :class="{ 'border-indigo-500 text-indigo-600': activeTab === 'classes', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'classes' }"
+      class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+    >
+      Classes
+    </button>
+    <button
+      @click="activeTab = 'grades'"
+      :class="{ 'border-indigo-500 text-indigo-600': activeTab === 'grades', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'grades' }"
+      class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+    >
+      Notes
+    </button>
+  </nav>
+</div> 

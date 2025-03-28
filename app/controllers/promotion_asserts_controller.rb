@@ -1,5 +1,6 @@
 class PromotionAssertsController < ApplicationController
   before_action :set_promotion_assert, only: %i[ show edit update destroy ]
+  before_action :prepare_select_data, only: %i[ new edit create update ]
 
   # GET /promotion_asserts or /promotion_asserts.json
   def index
@@ -58,13 +59,32 @@ class PromotionAssertsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_promotion_assert
-      @promotion_assert = PromotionAssert.find(params.expect(:id))
-    end
 
-    # Only allow a list of trusted parameters through.
-    def promotion_assert_params
-      params.expect(promotion_assert: [ :description, :function, :moment_id, :sector_id ])
+  # Use callbacks to share common setup or constraints between actions.
+  def set_promotion_assert
+    @promotion_assert = PromotionAssert.find(params.expect(:id))
+  end
+
+  # Only allow a list of trusted parameters through.
+  def promotion_assert_params
+    params.expect(promotion_assert: [:description, :function, :moment_id, :sector_id])
+  end
+
+  def prepare_select_data
+    @moments = Moment.where("end_on > ?", Date.new).order(:uid) # Semestres (1) et trimestres (2)
+    @sectors = Sector.all.order(:name)
+    @year_moments = Moment.where(moment_type: 0).order(:uid) # Années (0)
+    @school_classes = SchoolClass.none
+    @teachers = Teacher.all.order(:lastname, :firstname)
+
+    h = [
+      "hello",
+      "hello"
+    ]
+
+    if params[:id].present? && @course&.school_class_id.present?
+      @school_classes = SchoolClass.where(id: @course.school_class_id)
+      Rails.logger.debug "Loaded class #{@course.school_class_id} for existing course"
     end
+  end
 end

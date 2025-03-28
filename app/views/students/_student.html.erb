@@ -1,0 +1,18 @@
+<div class="bg-white border-1 border-gray-200 rounded-lg overflow-hidden mb-4">
+  <div class="p-4">
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="text-lg font-semibold">
+          <%= link_to "#{student.firstname} #{student.lastname}", student_path(student), class: "text-blue-600 hover:text-blue-800" %>
+        </h3>
+        <% if student.email.present? %>
+          <p class="text-sm text-gray-500"><%= student.email %></p>
+        <% end %>
+      </div>
+      <div class="text-sm text-gray-500">
+        <% current_class = student.school_classes.joins(:moment).order('moments.start_on DESC').first %>
+        <%= current_class&.name || "Aucune classe" %>
+      </div>
+    </div>
+  </div>
+</div> 

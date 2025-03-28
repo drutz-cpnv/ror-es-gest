@@ -23,7 +23,7 @@
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= student.firstname %></td>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= student.email %></td>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-          <%= link_to "View", person_path(student), class: "text-indigo-600 hover:text-indigo-900" %>
+          <%= link_to "View", student_path(student), class: "text-indigo-600 hover:text-indigo-900" %>
         </td>
       </tr>
     <% end %>

@@ -5,6 +5,11 @@ Rails.application.routes.draw do
   resources :people
   resources :promotion_asserts
   resources :grades
+  resources :students do
+    member do
+      get :generate_report
+    end
+  end
   resources :examinations do
     member do
       get 'students_with_grades', to: 'examinations#students_with_grades'
